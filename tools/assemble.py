@@ -4,6 +4,8 @@
 
 - dist/index.html  : Claude 아티팩트로 올리는 페이지 (아티팩트가 <!doctype>·<head> 를 감싸 줌)
 - dist/template.txt: template/template.pptx 를 base64 로 바꾼 것 (아티팩트는 .pptx 파일을 직접 못 올려서)
+- docs/index.html  : GitHub Pages 로 누구나 여는 페이지 (doctype·charset 을 직접 붙임)
+- docs/template.txt: 위와 같은 견본
 """
 import base64, pathlib
 
@@ -36,4 +38,15 @@ html = html.replace(old, new)
 
 (dist / 'index.html').write_text(html, encoding='utf-8')
 (dist / 'template.txt').write_text(base64.b64encode((ROOT / 'template' / 'template.pptx').read_bytes()).decode(), encoding='utf-8')
-print('dist/index.html, dist/template.txt 만들었어요')
+# GitHub Pages 용: 아티팩트가 붙여 주던 머리 부분을 직접 붙인다
+docs = ROOT / 'docs'
+docs.mkdir(exist_ok=True)
+skeleton = ('<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n'
+            '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
+            '<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}'
+            'body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>\n'
+            '</head>\n<body>\n')
+(docs / 'index.html').write_text(skeleton + html + '</body>\n</html>\n', encoding='utf-8')
+(docs / 'template.txt').write_text((dist / 'template.txt').read_text(encoding='utf-8'), encoding='utf-8')
+(docs / '.nojekyll').write_text('', encoding='utf-8')
+print('dist/, docs/ 를 만들었어요')

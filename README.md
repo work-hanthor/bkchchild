@@ -3,6 +3,18 @@
 교회 아동부 주일예배 PPT를 자동으로 만드는 웹 페이지예요.
 매주 바뀌는 내용(찬양 가사, 말씀, 기도자, 퀴즈, 광고, 설교 PPT)만 입력하면 늘 쓰던 디자인 그대로 `.pptx` 파일이 만들어져요.
 
+## 바로 열기
+
+- **누구나 여는 주소 (GitHub Pages)**: https://work-hanthor.github.io/bkchchild/
+- **Claude에서 쓰는 페이지**: 선생님 계정의 Claude 아티팩트 (공유한 사람만 열 수 있어요)
+
+두 페이지는 같은 코드예요. 다른 점은 **찬양 목록이 저장되는 곳**뿐이에요.
+
+| | 찬양 목록 |
+|---|---|
+| Claude 페이지 | 페이지에 저장돼서, 다른 기기에서 열거나 공유받은 선생님도 같은 목록을 봐요. |
+| GitHub Pages 주소 | 그 기기의 그 브라우저에만 저장돼요. 다른 컴퓨터에서는 따로 모아야 해요. |
+
 ## 할 수 있는 일
 
 - **예배 순서대로 입력**: 예배 날짜 → 예배의 부름 → 찬양 → 기도 → 성경봉독 → 찬양대 → 말씀 → 봉헌 → 광고
@@ -24,6 +36,7 @@
 | `tools/assemble.py` | `src/`와 견본을 합쳐 `dist/`를 만드는 스크립트 |
 | `tools/build_template.py` | 원본 주일예배 PPT에서 견본 슬라이드만 골라 `template.pptx`를 만드는 스크립트 |
 | `dist/index.html`, `dist/template.txt` | 완성된 페이지와 base64로 바꾼 견본 (Claude 아티팩트로 올리는 파일) |
+| `docs/` | GitHub Pages로 누구나 여는 페이지 (`dist/`와 같은 내용에 머리 부분만 붙인 것) |
 
 ## 고친 뒤 다시 만들기
 
@@ -31,7 +44,7 @@
 python3 tools/assemble.py
 ```
 
-`dist/index.html`과 `dist/template.txt`가 새로 만들어져요.
+`dist/`와 `docs/`가 함께 새로 만들어져요. GitHub에 올리면 1~2분 뒤 GitHub Pages 주소에도 반영돼요.
 
 ## 디자인을 바꾸고 싶을 때
 
