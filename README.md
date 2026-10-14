@@ -8,12 +8,11 @@
 - **누구나 여는 주소 (GitHub Pages)**: https://work-hanthor.github.io/bkchchild/
 - **Claude에서 쓰는 페이지**: 선생님 계정의 Claude 아티팩트 (공유한 사람만 열 수 있어요)
 
-두 페이지는 같은 코드예요. 다른 점은 **찬양 목록이 저장되는 곳**뿐이에요.
+두 페이지는 같은 코드이고, **찬양 목록도 같아요.**
 
-| | 찬양 목록 |
-|---|---|
-| Claude 페이지 | 페이지에 저장돼서, 다른 기기에서 열거나 공유받은 선생님도 같은 목록을 봐요. |
-| GitHub Pages 주소 | 그 기기의 그 브라우저에만 저장돼요. 다른 컴퓨터에서는 따로 모아야 해요. |
+- Claude 페이지의 찬양 목록은 `docs/songs.json`으로 옮겨 저장소에 올라가고, GitHub 주소는 이 파일을 읽어 같은 목록을 보여줘요.
+- Claude 페이지에서 찬양을 더하거나 차이점을 고친 뒤 GitHub에도 반영하려면 목록을 다시 옮겨 올려야 해요. (`tools/export_songs.py`)
+- GitHub 주소에서 새로 넣은 찬양이나 고친 차이점은 그 브라우저에만 저장되고, Claude 페이지로는 넘어가지 않아요. 찬양 목록 관리는 Claude 페이지에서 하는 걸 권해요.
 
 ## 할 수 있는 일
 
@@ -37,6 +36,8 @@
 | `tools/build_template.py` | 원본 주일예배 PPT에서 견본 슬라이드만 골라 `template.pptx`를 만드는 스크립트 |
 | `dist/index.html`, `dist/template.txt` | 완성된 페이지와 base64로 바꾼 견본 (Claude 아티팩트로 올리는 파일) |
 | `docs/` | GitHub Pages로 누구나 여는 페이지 (`dist/`와 같은 내용에 머리 부분만 붙인 것) |
+| `docs/songs.json` | Claude 페이지의 찬양 목록을 옮긴 것 |
+| `tools/export_songs.py` | Claude 페이지의 찬양 목록(문서 JSON 파일들)을 `docs/songs.json`으로 모으는 스크립트 |
 
 ## 고친 뒤 다시 만들기
 

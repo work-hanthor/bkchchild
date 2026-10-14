@@ -297,10 +297,24 @@
         db.collection('songs').onSnapshot((snap) => { this.songs = snap.docs.map((d) => ({ id: d.id, ...d.data() })); renderLib(); },
           () => setStatus($('libStatus'), '찬양 목록을 불러오지 못했어요. 잠시 뒤 다시 열어 주세요.', 'err'));
       } else {
-        try { this.songs = JSON.parse(localStorage.getItem(LKEY) || '[]'); } catch (e) { this.songs = []; }
-        renderLib();
+        // Claude 밖(GitHub 주소 등): 저장소의 songs.json(Claude 페이지 목록을 옮긴 것)에
+        // 이 브라우저에서 더하거나 고친 것을 겹쳐 보여준다
+        try { this.local = JSON.parse(localStorage.getItem(LKEY) || '[]'); } catch (e) { this.local = []; }
+        this.merge(); renderLib();
+        try {
+          const r = await fetch('songs.json', { cache: 'no-cache' });
+          if (r.ok) { const list = await r.json(); if (Array.isArray(list)) { this.shared = list; this.merge(); renderLib(); } }
+        } catch (e) { /* 파일이 없으면 이 브라우저 목록만 쓴다 */ }
       }
     },
+    shared: [], local: [],
+    merge() {
+      const byId = new Map();
+      this.shared.forEach((s) => byId.set(s.id, s));
+      this.local.forEach((s) => byId.set(s.id, { ...(byId.get(s.id) || {}), ...s }));
+      this.songs = [...byId.values()];
+    },
+    saveLocal() { try { localStorage.setItem(LKEY, JSON.stringify(this.local)); } catch (e) {} this.merge(); renderLib(); },
     // 'exists' = 제목·가사가 같은 찬양이 이미 있어 넣지 않음, 'added' = 새로 저장
     async put(song, source, extra) {
       if (this.has(song)) return 'exists';
@@ -308,17 +322,21 @@
       const doc = { title: cleanTitle(song.title), color: song.color === 'orange' ? 'orange' : 'blue', lyrics: song.lyrics, addedAt: new Date().toISOString(), source: source || '', ...(extra || {}) };
       this.pending.add(songKey(song));
       if (this.db) { await this.db.collection('songs').doc(id).set(doc); }
-      else { this.songs = this.songs.concat({ id, ...doc }); try { localStorage.setItem(LKEY, JSON.stringify(this.songs)); } catch (e) {} renderLib(); }
+      else { this.local = this.local.filter((s) => s.id !== id).concat({ id, ...doc }); this.saveLocal(); }
       return 'added';
     },
     pending: new Set(),
     async update(id, fields) {
       if (this.db) await this.db.collection('songs').doc(id).update(fields);
-      else { this.songs = this.songs.map((s) => (s.id === id ? { ...s, ...fields } : s)); try { localStorage.setItem(LKEY, JSON.stringify(this.songs)); } catch (e) {} renderLib(); }
+      else {
+        const cur = this.songs.find((s) => s.id === id) || { id };
+        this.local = this.local.filter((s) => s.id !== id).concat({ ...cur, ...fields });
+        this.saveLocal();
+      }
     },
     async del(id) {
       if (this.db) await this.db.collection('songs').doc(id).delete();
-      else { this.songs = this.songs.filter((s) => s.id !== id); try { localStorage.setItem(LKEY, JSON.stringify(this.songs)); } catch (e) {} renderLib(); }
+      else { this.local = this.local.filter((s) => s.id !== id); this.shared = this.shared.filter((s) => s.id !== id); this.saveLocal(); }
     },
     has(song) { const k = songKey(song); return this.pending.has(k) || this.songs.some((s) => songKey(s) === k); },
     hasTitle(title) { const t = tnorm(title); return this.songs.some((s) => tnorm(s.title) === t); },
