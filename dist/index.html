@@ -1,0 +1,1601 @@
+<title>아동부 예배 PPT 만들기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* 레이아웃: 왼쪽은 예배 순서대로 입력, 오른쪽은 슬라이드 큐시트(장수)와 만들기 버튼 */
+:root{
+  --bg:#f7f8f6; --surface:#ffffff; --sunk:#eef2f3; --ink:#1d2830; --muted:#5f6d76; --line:#dde3e6;
+  --sky:#1f97c6; --sky-soft:#dff2fa; --sun:#f08c12; --sun-soft:#fff0dc; --coral:#e8524f; --coral-soft:#fde6e5;
+  --ok:#2c8a55; --coral-strong:#c93a37; --sky-ink:#10688b;
+  --display:"Jua","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11171b; --surface:#182127; --sunk:#0d1316; --ink:#e7eef2; --muted:#9aa9b2; --line:#2a363e;
+  --sky:#4cb8e2; --sky-soft:#173543; --sun:#ffab45; --sun-soft:#3d2c14; --coral:#ff7b77; --coral-soft:#3e2020; --ok:#5ccf8c; --coral-strong:#d6413e; --sky-ink:#bfe7f7; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11171b; --surface:#182127; --sunk:#0d1316; --ink:#e7eef2; --muted:#9aa9b2; --line:#2a363e;
+  --sky:#4cb8e2; --sky-soft:#173543; --sun:#ffab45; --sun-soft:#3d2c14; --coral:#ff7b77; --coral-soft:#3e2020; --ok:#5ccf8c; --coral-strong:#d6413e; --sky-ink:#bfe7f7; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;padding:0 16px}
+.wrap{max-width:1180px;margin:0 auto;padding-block:20px 60px}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;padding-block:8px 18px;border-bottom:1px solid var(--line);margin-bottom:22px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(26px,4vw,34px);line-height:1.15;margin:0;text-wrap:balance}
+h1 .dot{color:var(--sun)}
+.sub{color:var(--muted);margin:4px 0 0;font-size:14px}
+.date-field{display:flex;align-items:center;gap:8px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:28px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+main{display:flex;flex-direction:column;gap:18px;min-width:0}
+section.part{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.part-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pill{font-family:var(--display);font-size:19px;line-height:1;padding:8px 16px 7px;border-radius:999px;color:#fff;background:var(--coral);white-space:nowrap}
+.pill.sky{background:var(--sky)} .pill.sun{background:var(--sun)}
+:root[data-theme="dark"] .pill, :root:not([data-theme="light"]) .pill{color:#fff}
+.part-head .hint{color:var(--muted);font-size:13px}
+.part-head .spacer{flex:1}
+.part.compact{padding:14px 18px;gap:10px}
+.line{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;min-width:0}
+.line .pill{min-width:104px;text-align:center}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#date{max-width:200px}
+.date-l{flex:0 0 auto}
+.pill-space{width:104px;flex:0 0 auto}
+@media (max-width:560px){.pill-space{display:none}}
+.inline{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);font-weight:500;flex:1 1 220px;min-width:0}
+.inline span{white-space:nowrap}
+.inline input{flex:1;min-width:0}
+.now{font-size:14px;color:var(--muted);flex:1 1 200px;min-width:0;overflow-wrap:anywhere}
+.now b{color:var(--ink);font-weight:600}
+.now b.empty{color:var(--muted);font-weight:400}
+.toggle{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:6px 12px;min-height:36px;color:var(--muted);font-size:13.5px;margin-left:auto}
+.toggle:hover{color:var(--ink)}
+.toggle svg{transition:transform .15s}
+.toggle[aria-expanded="true"]{color:var(--ink);background:var(--sunk)}
+.toggle[aria-expanded="true"] svg{transform:rotate(180deg)}
+.more{display:flex;flex-direction:column;gap:10px;padding-top:4px;border-top:1px dashed var(--line);padding-top:12px}
+.more[hidden]{display:none}
+.row{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted);font-weight:500;min-width:0}
+input[type=text],input[type=date],textarea,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:9px 11px;width:100%;min-width:0}
+textarea{resize:vertical;line-height:1.6}
+textarea.lyrics{min-height:180px;font-size:14.5px}
+input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--sky);outline-offset:1px}
+button{font:inherit;cursor:pointer;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:7px 12px;font-size:14px}
+button:hover{border-color:var(--muted)}
+button.ghost{border-color:transparent;background:transparent;color:var(--muted);padding:6px 8px}
+button.ghost:hover{color:var(--ink);background:var(--sunk)}
+button.add{border-style:dashed;color:var(--muted);width:100%;padding:11px}
+button.primary{background:var(--coral);border-color:var(--coral);color:#fff;font-family:var(--display);font-size:21px;padding:13px 18px;width:100%;border-radius:999px}
+button.primary:disabled{opacity:.55;cursor:wait}
+.check{display:flex;align-items:center;gap:8px;font-size:15px}
+.check input{width:18px;height:18px;accent-color:var(--sky)}
+details.help{font-size:13.5px;color:var(--muted);background:var(--sunk);border-radius:9px;padding:9px 12px}
+details.help summary{cursor:pointer;font-weight:500;color:var(--ink)}
+details.help ul{margin:8px 0 2px;padding-left:18px}
+code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:0 4px}
+
+/* 찬양 카드 */
+.songs{display:flex;flex-direction:column;gap:14px}
+.song{border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--bg);border-left:5px solid var(--sky)}
+.song.orange{border-left-color:var(--sun)}
+.song-head{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.song-no{font-family:var(--display);font-size:18px;color:var(--muted);min-width:22px}
+.song-head input{flex:1 1 180px;font-weight:600}
+.color-tag{font-size:12.5px;font-weight:600;color:var(--sky);background:var(--sky-soft);border-radius:999px;padding:3px 10px;white-space:nowrap}
+.song.orange .color-tag{color:var(--sun);background:var(--sun-soft)}
+:root:not([data-theme="dark"]) .song.orange .color-tag{color:#a85a00}
+.swatches{display:flex;gap:4px}
+.sw{width:30px;height:30px;border-radius:50%;padding:0;border:3px solid transparent}
+.sw.blue{background:var(--sky)} .sw.orange{background:var(--sun)}
+.sw[aria-pressed="true"]{border-color:var(--ink)}
+.strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.chip{flex:0 0 auto;width:92px;height:52px;border-radius:6px;background:var(--surface);border:1px solid var(--line);font-size:10.5px;line-height:1.25;padding:5px 6px;color:var(--sky);overflow:hidden;position:relative;text-align:center;white-space:pre-line}
+.song.orange .chip,.chip.orange{color:var(--sun)}
+.chip.title{background:var(--sky);color:#fff;font-family:var(--display);font-size:12px;border-color:transparent;display:flex;align-items:center;justify-content:center}
+.chip.inter{display:flex;align-items:center;justify-content:center}
+.song.orange .chip.title{background:var(--sun);color:#fff}
+.chip.inter{color:var(--muted)}
+.chip .tag{position:absolute;top:2px;left:2px;z-index:1;background:var(--ink);color:var(--bg);font-size:8.5px;padding:0 3px;border-radius:3px}
+.song-foot{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted)}
+.song-foot .spacer{flex:1}
+
+/* 그림 */
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.thumb{position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--sunk);aspect-ratio:16/9;max-width:100%}
+.thumb img{width:100%;height:100%;object-fit:contain;display:block}
+.thumb .ctl{position:absolute;inset:auto 0 0 0;display:flex;justify-content:space-between;background:linear-gradient(transparent,rgba(0,0,0,.55));padding:14px 4px 3px}
+.thumb .ctl button{background:transparent;border:0;color:#fff;padding:2px 6px;font-size:13px}
+.thumb .n{position:absolute;top:4px;left:4px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;border-radius:4px;padding:0 5px}
+.drop{display:block;border:1.5px dashed var(--line);border-radius:var(--r);padding:14px;text-align:center;color:var(--muted);font-size:14px;cursor:pointer}
+.drop.over{border-color:var(--sky);background:var(--sky-soft)}
+.drop input{display:none}
+
+.deck{display:flex;flex-direction:column;gap:8px}
+.deck-head{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.deck-name{font-weight:600;min-width:0;overflow-wrap:anywhere}
+.deck-head .spacer{flex:1}
+.slides{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.sl{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;padding:8px 10px;border-radius:9px;background:var(--sun-soft);border:1.5px solid var(--sun);min-width:0}
+.sl[aria-pressed="false"]{background:var(--surface);border-color:var(--line);opacity:.55}
+.sl .no{font-family:var(--display);font-size:16px}
+.sl .tx{font-size:12px;color:var(--muted);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;min-height:2.5em}
+.sl .bd{display:flex;gap:4px;flex-wrap:wrap}
+.sl .bd span{font-size:10.5px;border-radius:4px;padding:0 5px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.sl .bd .anim{color:var(--sky);border-color:var(--sky)}
+.sub{display:flex;flex-direction:column;gap:8px;min-width:0}
+.sub + .sub{border-top:1px solid var(--line);padding-top:16px}
+.sub-h{margin:0;font-size:16px;font-weight:600;line-height:1.4;color:var(--ink)}
+.sub-h label{color:inherit}
+.sub .small{margin:0}
+.thumbs:empty{display:none}
+.quiz{display:grid;grid-template-columns:minmax(0,1fr) 140px auto;gap:8px;align-items:start}
+@media (max-width:560px){.quiz{grid-template-columns:minmax(0,1fr) auto}.quiz .ans{grid-column:1}}
+
+/* 큐시트 */
+aside{position:sticky;top:calc(env(safe-area-inset-top,0px) + 14px);display:flex;flex-direction:column;gap:14px;min-width:0}
+@media (max-width:900px){aside{position:static}}
+.cue{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.cue h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0 0 4px}
+.cue .total{font-size:13px;color:var(--muted);margin-bottom:10px}
+.cue ol{list-style:none;margin:0;padding:0;max-height:46vh;overflow:auto;border-top:1px solid var(--line)}
+.cue li{display:flex;justify-content:space-between;gap:10px;padding:6px 2px;border-bottom:1px solid var(--line);font-size:13.5px}
+.cue li span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cue li .cnt{font-variant-numeric:tabular-nums;color:var(--muted);flex:0 0 auto}
+.status{font-size:13.5px;min-height:20px;color:var(--muted)}
+.status.ok{color:var(--ok)} .status.err{color:var(--coral)}
+.small{font-size:12.5px;color:var(--muted)}
+.lib-btn{width:100%;display:flex;justify-content:space-between;align-items:center}
+
+/* 찬양 목록 서랍 */
+.drawer-bg{position:fixed;inset:0;background:rgba(10,20,25,.4);z-index:20}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--surface);z-index:21;display:flex;flex-direction:column;border-left:1px solid var(--line);padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 16px)}
+.drawer h2{font-family:var(--display);font-weight:400;font-size:22px;margin:0}
+.drawer .dhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.drawer .tools{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.lib{flex:1;overflow:auto;display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.lib-item{display:flex;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid var(--line)}
+.lib-item .info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.lib-item .t{display:flex;align-items:baseline;gap:8px;min-width:0}
+.lib-item .tt{font-weight:600;font-size:15.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lib-item .cnt{flex:0 0 auto;font-size:12.5px;color:var(--muted);white-space:nowrap}
+.lib-item .ly{font-size:12.5px;color:var(--muted);line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lib-hint{margin:0 0 8px;line-height:1.5}
+.lib-hint b{color:var(--ink)}
+.note{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-top:4px;min-width:0}
+.note span{white-space:nowrap;font-weight:500}
+.note input{flex:1;min-width:0;font-size:12.5px;padding:5px 8px;border-radius:7px}
+.cmp-notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.cmp-notes[hidden]{display:none}
+.cmp-notes .note{margin:0;font-size:13px}
+.cmp-notes .note input{font-size:13.5px;padding:8px 10px}
+@media (max-width:640px){.cmp-notes{grid-template-columns:minmax(0,1fr)}}
+.lib-item .a{flex:0 0 auto;display:grid;grid-template-columns:max-content;gap:6px}
+.lib-item .a button{min-height:34px;padding:0 12px;border-radius:999px;font-size:12.5px;white-space:nowrap}
+.lib-item .a .use{background:var(--sky-soft);border-color:var(--sky);color:var(--sky-ink);font-weight:600}
+.empty{color:var(--muted);font-size:14px;padding:18px 4px;text-align:center}
+.confirm{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--coral)}
+@media (prefers-reduced-motion:no-preference){.drawer{animation:slide .18s ease-out}@keyframes slide{from{transform:translateX(30px);opacity:.6}}}
+
+/* 가사 비교 팝업 */
+.cmp-bg{position:fixed;inset:0;background:rgba(10,20,25,.45);z-index:30}
+.cmp{position:fixed;z-index:31;left:50%;top:50%;transform:translate(-50%,-50%);width:min(860px,calc(100% - 24px));height:min(660px,calc(100% - 24px));box-sizing:border-box;background:var(--surface);border-radius:18px;padding:24px 26px 20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 24px 60px rgba(10,20,25,.3)}
+.cmp-head{display:flex;gap:12px;align-items:flex-start}
+.cmp-headtext{flex:1;min-width:0}
+.cmp-step{font-size:13px;font-weight:500;color:var(--muted)}
+.cmp h2{font-family:var(--display);font-weight:400;font-size:28px;line-height:1.2;margin:2px 0 4px;overflow-wrap:anywhere}
+.cmp p{margin:0;font-size:14px;color:var(--muted)}
+.cmp-x{width:44px;height:44px;border:0;background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;padding:0}
+.cmp-x:hover{background:var(--sunk);color:var(--ink)}
+.cmp-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;flex:1;min-height:0}
+.cmp-col{display:flex;flex-direction:column;gap:8px;min-height:0;min-width:0}
+.cmp-colhead{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:15px}
+.cmp-colhead span{font-size:12.5px;color:var(--muted)}
+.cmp-list{flex:1;min-height:0;overflow-y:auto;border:1px solid var(--line);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px;background:var(--bg)}
+.cmp-row{display:flex;gap:10px;padding:8px 10px;border-radius:9px;background:var(--surface);border:1px solid transparent}
+.cmp-row.diff{background:var(--sun-soft);border-color:var(--sun)}
+.cmp-row.gone{background:var(--sun-soft);border:1px dashed var(--sun)}
+.cmp-row.gone .cmp-body{font-style:italic;color:var(--muted)}
+.cmp-no{font-family:var(--display);font-size:15px;color:var(--muted);width:18px;flex:0 0 auto}
+.cmp-body{font-size:13.5px;line-height:1.55;min-width:0;overflow-wrap:anywhere}
+.cmp-body mark{background:#ffd99a;color:#5a2e00;border-radius:3px;padding:0 2px}
+.cmp-tag{display:inline-block;font-size:10.5px;background:var(--ink);color:var(--bg);border-radius:3px;padding:0 4px;margin-bottom:2px}
+.cmp-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.cmp-choice{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:12px 14px;min-height:72px;border-radius:12px;border:2px solid var(--line);background:var(--surface);text-align:left}
+.cmp-choice[aria-checked="true"]{border-color:var(--sky);background:var(--sky-soft)}
+.cmp-ct{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14.5px}
+.cmp-cd{font-size:12.5px;color:var(--muted);line-height:1.45}
+.cmp-dot{width:16px;height:16px;border-radius:50%;box-sizing:border-box;border:2px solid var(--muted);flex:0 0 auto}
+.cmp-choice[aria-checked="true"] .cmp-dot{border:5px solid var(--sky);background:var(--surface)}
+.cmp-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cmp-all[hidden]{display:none}
+.cmp-all{display:flex;align-items:center;gap:8px;font-size:13.5px}
+.cmp-all input{width:18px;height:18px;accent-color:var(--sky)}
+.cmp-spacer{flex:1}
+.cmp-stop{height:44px;padding:0 18px;border-radius:999px}
+.cmp-ok{height:44px;padding:0 26px;border-radius:999px;border:0;background:var(--coral-strong);color:#fff;font-family:var(--display);font-size:18px}
+@media (max-width:640px){.cmp{padding:18px 16px 16px}.cmp-cols{grid-template-columns:minmax(0,1fr);grid-template-rows:repeat(2,minmax(0,1fr))}.cmp-choices{grid-template-columns:minmax(0,1fr)}.cmp-choice{min-height:0}.cmp-cd{display:none}}
+</style>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>아동부 예배 PPT 만들기<span class="dot">.</span></h1>
+      <p class="sub">이번 주에 바뀌는 내용만 고치면, 늘 쓰던 디자인 그대로 PPT 파일이 만들어져요.</p>
+    </div>
+  </header>
+
+  <div class="grid">
+    <main>
+      <section class="part compact">
+        <div class="line">
+          <span class="pill sky">예배 날짜</span>
+          <label class="inline date-l" for="date"><span class="sr">예배 날짜</span><input type="date" id="date"></label>
+          <span class="now" id="fileHint"></span>
+        </div>
+      </section>
+
+      <section class="part compact">
+        <div class="line">
+          <span class="pill">예배의 부름</span>
+          <label class="inline" for="callRef"><span>말씀 위치</span><input type="text" id="callRef" placeholder="요한복음 15:4"></label>
+          <button type="button" class="toggle" data-toggle="callMore" aria-controls="callMore" aria-expanded="false"><span class="tl">말씀 보기</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        </div>
+        <div class="more" id="callMore" hidden>
+          <label class="f" for="callText">말씀 (줄바꿈 그대로 들어가요)<textarea id="callText" rows="4"></textarea></label>
+        </div>
+      </section>
+
+      <section class="part">
+        <div class="part-head"><span class="pill sky">찬양</span><span class="hint">1·3·5번째는 파랑, 2·4번째는 주황으로 자동으로 정해져요</span></div>
+        <details class="help">
+          <summary>가사 쓰는 법</summary>
+          <ul>
+            <li>빈 줄 하나로 다음 슬라이드로 넘어가요.</li>
+            <li><code>간주</code>만 한 줄 쓰면 "( 간 주 중 … )" 화면이 들어가요.</li>
+            <li>첫 줄 앞에 <code>[마지막]</code>을 붙이면 "마지막" 표시가 달린 슬라이드가 돼요.</li>
+            <li>제목을 두 줄로 나누려면 <code>/</code>를 넣어요. 예: 삶으로 믿음으로 / 보여줘요</li>
+          </ul>
+        </details>
+        <div class="songs" id="songs"></div>
+        <div class="row">
+          <button class="add" id="addSong" type="button">+ 새 찬양 추가</button>
+          <button class="add" id="openLib1" type="button">찬양 목록에서 고르기</button>
+        </div>
+      </section>
+
+      <section class="part compact">
+        <div class="line">
+          <span class="pill">기도</span>
+          <label class="inline" for="prayer"><span>대표기도</span><input type="text" id="prayer" placeholder="정은채 어린이"></label>
+        </div>
+      </section>
+
+      <section class="part">
+        <div class="part-head"><span class="pill sky">성경봉독</span></div>
+        <div class="row">
+          <label class="f" for="book">성경<input type="text" id="book" list="books" placeholder="열왕기하"></label>
+          <label class="f" for="chapter">장<input type="text" id="chapter" inputmode="numeric" placeholder="23"></label>
+          <label class="f" for="verses">절<input type="text" id="verses" placeholder="2~3"></label>
+          <label class="f" for="abbr">약자 (자동)<input type="text" id="abbr" placeholder="왕하"></label>
+        </div>
+        <datalist id="books"></datalist>
+        <label class="f" for="bibleText">본문 — 절 번호로 시작하는 줄마다 한 장씩 만들어져요<textarea id="bibleText" rows="5" placeholder="2 이에 왕이 여호와의 성전에 올라가매…&#10;3 왕이 단 위에 서서…"></textarea></label>
+        <p class="small">글이 길면 글자 크기가 자동으로 작아져요. 환영 슬라이드의 "오늘 말씀 미리 찾아요" 위치도 함께 바뀌어요.</p>
+      </section>
+
+      <section class="part compact">
+        <div class="line">
+          <span class="pill sun">찬양대</span>
+          <label class="check" for="choir"><input type="checkbox" id="choir"> 찬양대 순서 넣기</label>
+        </div>
+      </section>
+
+      <section class="part">
+        <div class="line">
+          <span class="pill sun">말씀</span>
+          <label class="inline" for="sermonTitle"><span>설교 제목</span><input type="text" id="sermonTitle" placeholder="진정한 개혁의 시작"></label>
+        </div>
+        <div class="deck">
+          <label class="drop" id="deckDrop" for="deckFile"><b>설교 PPT 파일</b>을 여기로 끌어오거나 눌러서 고르기<br><span class="small">애니메이션·화면 전환·배경까지 원래 모습 그대로 들어가요</span><input type="file" id="deckFile" accept=".pptx"></label>
+          <div id="deckInfo" hidden>
+            <div class="deck-head"><span class="deck-name" id="deckName"></span><span class="spacer"></span><button type="button" class="ghost" id="deckAll">모두 넣기</button><button type="button" class="ghost" id="deckRemove">파일 빼기</button></div>
+            <p class="small" id="deckMsg" style="margin:4px 0 8px"></p>
+            <div class="slides" id="deckSlides"></div>
+          </div>
+        </div>
+        <details class="help">
+          <summary>설교 PPT 대신 그림 파일로 넣기</summary>
+          <p style="margin:8px 0">그림 한 장이 슬라이드 한 장이 되고, 화면에 꽉 차게 들어가요. 설교 PPT 슬라이드 뒤에 붙어요.</p>
+          <div class="thumbs" id="sermonThumbs"></div>
+          <label class="drop" id="sermonDrop" for="sermonFiles" style="margin-top:8px">그림 파일을 여기로 끌어오거나 눌러서 고르기<input type="file" id="sermonFiles" accept="image/png,image/jpeg,image/gif,image/webp" multiple></label>
+        </details>
+      </section>
+
+      <section class="part compact">
+        <div class="line">
+          <span class="pill sun">봉헌</span>
+          <span class="now">현재 찬양 : <b id="offeringNow"></b></span>
+          <button type="button" class="toggle" data-toggle="offeringMore" aria-controls="offeringMore" aria-expanded="false"><span class="tl">가사 보기</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        </div>
+        <div class="line">
+          <span class="pill-space" aria-hidden="true"></span>
+          <label class="inline" for="offeringPrayer"><span>봉헌기도</span><input type="text" id="offeringPrayer" placeholder="조지혜 선생님"></label>
+        </div>
+        <div class="more" id="offeringMore" hidden>
+          <div class="line">
+            <label class="inline" for="offeringTitle"><span>찬양 제목</span><input type="text" id="offeringTitle" placeholder="주를 예배하는 삶"></label>
+            <button class="ghost" type="button" id="openLib2">목록에서 고르기</button>
+          </div>
+          <label class="f" for="offeringLyrics">봉헌 찬양 가사 (쓰는 법은 찬양과 같아요)<textarea id="offeringLyrics" class="lyrics" style="min-height:140px"></textarea></label>
+          <div class="strip" id="offeringStrip"></div>
+        </div>
+      </section>
+
+      <section class="part">
+        <div class="part-head"><span class="pill">광고</span></div>
+        <div class="sub">
+          <h3 class="sub-h">① 기억나요 말씀퀴즈</h3>
+          <p class="small">문제가 없으면 퀴즈 순서는 빠져요. <code>*글자*</code>로 감싸면 강조 색이 들어가요.</p>
+          <div id="quizList" style="display:flex;flex-direction:column;gap:8px"></div>
+          <button class="add" id="addQuiz" type="button">+ 퀴즈 추가</button>
+        </div>
+        <div class="sub">
+          <h3 class="sub-h"><label for="notice">② 광고합니다</label></h3>
+          <p class="small"><code>*글자*</code>로 감싸면 강조 색이 들어가요.</p>
+          <textarea id="notice" rows="7"></textarea>
+        </div>
+        <div class="sub">
+          <h3 class="sub-h">③ <span id="verseMonth">10월의 암송 말씀</span></h3>
+          <p class="small">광고 다음에 그림 한 장이 슬라이드 한 장으로 들어가요.</p>
+          <div class="thumbs" id="posterThumbs"></div>
+          <label class="drop" id="posterDrop" for="posterFiles">그림 파일을 여기로 끌어오거나 눌러서 고르기<input type="file" id="posterFiles" accept="image/png,image/jpeg,image/gif,image/webp" multiple></label>
+        </div>
+      </section>
+    </main>
+
+    <aside>
+      <div class="cue">
+        <h2>슬라이드 순서</h2>
+        <div class="total" id="total"></div>
+        <ol id="cue"></ol>
+      </div>
+      <button class="primary" id="make" type="button">PPT 만들기</button>
+      <div class="status" id="status" role="status"></div>
+      <button class="lib-btn" id="openLib3" type="button"><span>찬양 목록</span><span class="small" id="libCount"></span></button>
+      <p class="small">입력한 글은 이 브라우저에 자동 저장돼요. 설교 PPT와 그림 파일은 저장되지 않으니 매주 새로 넣어주세요.</p>
+    </aside>
+  </div>
+</div>
+
+<div id="drawer" hidden>
+  <div class="drawer-bg" id="drawerBg"></div>
+  <div class="drawer" role="dialog" aria-labelledby="drawerTitle">
+    <div class="dhead"><h2 id="drawerTitle">찬양 목록</h2><button class="ghost" id="closeLib" type="button" aria-label="닫기">닫기 ✕</button></div>
+    <div class="tools">
+      <input type="text" id="libSearch" placeholder="제목이나 가사, 차이점으로 찾기" aria-label="찬양 찾기">
+      <label class="drop" for="importFiles" id="importDrop" style="padding:10px"><b>주일예배 PPT 파일들</b>을 한꺼번에 넣으면 찬양 가사만 뽑아 저장해요<br><span class="small">제목과 가사가 같은 찬양은 한 번만 저장돼요</span><input type="file" id="importFiles" accept=".pptx" multiple></label>
+      <div class="status" id="libStatus"></div>
+    </div>
+    <p class="small lib-hint" id="libHint" hidden>같은 제목이 여러 개인 찬양에는 <b>차이점</b> 칸이 열려 있어요. 적고 Enter를 누르면 저장돼요.</p>
+    <div class="lib" id="lib"></div>
+  </div>
+</div>
+
+<div id="cmp" hidden>
+  <div class="cmp-bg"></div>
+  <div class="cmp" role="dialog" aria-modal="true" aria-labelledby="cmpTitle" aria-describedby="cmpLead">
+    <div class="cmp-head">
+      <div class="cmp-headtext">
+        <div class="cmp-step" id="cmpStep"></div>
+        <h2 id="cmpTitle"></h2>
+        <p id="cmpLead"></p>
+      </div>
+      <button type="button" class="cmp-x" id="cmpClose" aria-label="가져오기 그만두기"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="cmp-cols">
+      <div class="cmp-col">
+        <div class="cmp-colhead"><b>저장된 가사</b><span id="cmpSavedMeta"></span></div>
+        <div class="cmp-list" id="cmpSaved" tabindex="0" aria-label="저장된 가사"></div>
+      </div>
+      <div class="cmp-col">
+        <div class="cmp-colhead"><b>올린 가사</b><span id="cmpUpMeta"></span></div>
+        <div class="cmp-list" id="cmpUp" tabindex="0" aria-label="올린 가사"></div>
+      </div>
+    </div>
+    <div class="cmp-choices" id="cmpChoices" role="radiogroup" aria-label="저장할 버전">
+      <button type="button" class="cmp-choice" role="radio" data-v="keep"><span class="cmp-ct"><span class="cmp-dot"></span>저장된 가사 그대로</span><span class="cmp-cd">올린 가사는 넣지 않아요.</span></button>
+      <button type="button" class="cmp-choice" role="radio" data-v="replace"><span class="cmp-ct"><span class="cmp-dot"></span>올린 가사로 바꾸기</span><span class="cmp-cd">저장된 가사 대신 올린 가사를 저장해요.</span></button>
+      <button type="button" class="cmp-choice" role="radio" data-v="both"><span class="cmp-ct"><span class="cmp-dot"></span>둘 다 저장</span><span class="cmp-cd">다른 버전으로 따로 저장해요.</span></button>
+    </div>
+    <div class="cmp-notes" id="cmpNotes" hidden>
+      <label class="note" for="cmpNoteSaved"><span>저장된 가사 차이점</span><input type="text" id="cmpNoteSaved" placeholder="예: 어노인팅 2007년 버전"></label>
+      <label class="note" for="cmpNoteUp"><span>올린 가사 차이점</span><input type="text" id="cmpNoteUp" placeholder="예: 랩 제거 버전"></label>
+    </div>
+    <div class="cmp-foot">
+      <label class="cmp-all" id="cmpAllWrap" for="cmpAll"><input type="checkbox" id="cmpAll"> <span id="cmpAllText"></span></label>
+      <span class="cmp-spacer"></span>
+      <button type="button" class="cmp-stop" id="cmpStop">가져오기 그만두기</button>
+      <button type="button" class="cmp-ok" id="cmpOk">이대로 두기</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+/* 아동부 예배 PPT 생성기 — 견본(template.pptx)의 슬라이드를 복제해 내용만 바꿔 넣는다. */
+(function (global) {
+  const NS_A = 'http://schemas.openxmlformats.org/drawingml/2006/main';
+  const NS_P = 'http://schemas.openxmlformats.org/presentationml/2006/main';
+  const NS_R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+  const XML_DECL = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+  const SLIDE_W = 9144000, SLIDE_H = 5143500;
+
+  // 견본 슬라이드 번호 (template.pptx 안의 slideN.xml)
+  const P = {
+    welcome: 1, callTitle: 2, callVerse: 3, creedTitle: 4, creed: 5, blank: 6, praiseTitle: 7,
+    songTitle: { blue: 9, orange: 20 }, lyric: { blue: 10, orange: 21 },
+    interlude: { blue: 13, orange: 25 }, lyricLast: { blue: 17, orange: 30 },
+    prayerTitle: 79, prayerPerson: 80, bibleIntro: 82, bibleVerse: 83, bibleVerseAmen: 84,
+    choir: 86, sermonTitle: 88, offeringTitle: 103, offeringLyric: 104, offeringPrayer: 110,
+    benediction: 111, noticeTitle: 113, quizTitle: 114, quiz: 115, notice: 117, image: 118, end: 119,
+  };
+
+  const parseXml = (s) => new DOMParser().parseFromString(s, 'application/xml');
+  const serialize = (d) => { let s = new XMLSerializer().serializeToString(d); return s.startsWith('<?xml') ? s : XML_DECL + s; };
+  const kids = (el, ns, name) => [...el.childNodes].filter((n) => n.nodeType === 1 && n.namespaceURI === ns && n.localName === name);
+  const all = (el, ns, name) => [...el.getElementsByTagNameNS(ns, name)];
+  const spText = (sp) => all(sp, NS_A, 't').map((t) => t.textContent).join('');
+  const spName = (sp) => { const c = all(sp, NS_P, 'cNvPr')[0]; return c ? c.getAttribute('name') : ''; };
+  const textShapes = (doc) => all(doc, NS_P, 'sp').filter((sp) => spText(sp).trim());
+  const shapeByName = (doc, name) => all(doc, NS_P, 'sp').find((sp) => spName(sp) === name);
+
+  /* ---------- 글자 폭 추정 (자동 글자 크기 조절용) ---------- */
+  // sz(1/100pt)일 때 한 글자 폭(EMU). 한글은 거의 정사각, 공백·영문은 좁다.
+  function charW(ch, sz) {
+    const em = sz / 100 * 12700; // 1pt = 12700 EMU
+    if (ch === ' ') return em * 0.3;
+    if (/[ᄀ-ᇿ㄰-㆏가-힣一-鿿]/.test(ch)) return em * 0.92;
+    if (/[A-Z]/.test(ch)) return em * 0.62;
+    if (/[0-9a-z]/.test(ch)) return em * 0.52;
+    return em * 0.45;
+  }
+  const strW = (s, sz) => [...s].reduce((w, c) => w + charW(c, sz), 0);
+  function wrapCount(line, sz, width) {
+    // 어절 단위 줄바꿈 흉내
+    const words = line.split(/(\s+)/);
+    let lines = 1, cur = 0;
+    for (const w of words) {
+      const ww = strW(w, sz);
+      if (cur + ww > width && cur > 0) { lines++; cur = /^\s+$/.test(w) ? 0 : ww; while (cur > width) { lines++; cur -= width; } }
+      else cur += ww;
+    }
+    return lines;
+  }
+  function fitSize(lines, base, min, width, height, lineGap = 1.2, paraGap = 0) {
+    for (let sz = base; sz >= min; sz -= 100) {
+      const lh = sz / 100 * 12700 * lineGap;
+      let h = 0;
+      lines.forEach((l) => { h += wrapCount(l.replace(/\*/g, ''), sz, width) * lh + paraGap; });
+      if (h <= height) return sz;
+    }
+    return min;
+  }
+  function fitOneLine(lines, base, min, width) {
+    let sz = base;
+    for (const l of lines) {
+      const w = strW(l.replace(/\*/g, ''), base);
+      if (w > width) sz = Math.min(sz, Math.floor(base * width / w / 100) * 100);
+    }
+    return Math.max(min, sz);
+  }
+
+  /* ---------- 글상자 내용 바꾸기 ---------- */
+  const colorKey = (rPr) => { const f = rPr && kids(rPr, NS_A, 'solidFill')[0]; return f ? new XMLSerializer().serializeToString(f) : ''; };
+  // lines: 문자열 배열. *글자* 는 견본의 강조 색으로.
+  function fillShape(sp, lines, opt = {}) {
+    const doc = sp.ownerDocument;
+    const body = all(sp, NS_P, 'txBody')[0];
+    const paras = kids(body, NS_A, 'p');
+    const tplP = paras.find((p) => kids(p, NS_A, 'r').length) || paras[0];
+    const runs = all(body, NS_A, 'r');
+    const normal = runs.length ? kids(runs[0], NS_A, 'rPr')[0] : null;
+    const nKey = colorKey(normal);
+    const accentRun = runs.find((r) => { const k = colorKey(kids(r, NS_A, 'rPr')[0]); return k && k !== nKey; });
+    let accent = accentRun ? kids(accentRun, NS_A, 'rPr')[0] : null;
+    if (!accent && normal) { accent = normal.cloneNode(true); accent.setAttribute('b', '1'); }
+    const pPr = kids(tplP, NS_A, 'pPr')[0];
+    const endPr = kids(tplP, NS_A, 'endParaRPr')[0];
+    paras.forEach((p) => body.removeChild(p));
+    const mkRPr = (src, tag) => {
+      const el = doc.createElementNS(NS_A, tag);
+      if (src) {
+        for (const at of [...src.attributes]) if (at.name !== 'err') el.setAttribute(at.name, at.value);
+        for (const c of [...src.childNodes]) el.appendChild(c.cloneNode(true));
+      } else { el.setAttribute('lang', 'ko-KR'); }
+      if (opt.sz) el.setAttribute('sz', String(opt.sz));
+      return el;
+    };
+    lines.forEach((line, i) => {
+      const p = doc.createElementNS(NS_A, 'a:p');
+      if (pPr) {
+        const pp = pPr.cloneNode(true);
+        if (opt.startAt) { const an = all(pp, NS_A, 'buAutoNum')[0]; if (an) an.setAttribute('startAt', String(opt.startAt)); }
+        if (opt.noNumber) {
+          all(pp, NS_A, 'buAutoNum').forEach((n) => n.parentNode.removeChild(n));
+          pp.setAttribute('marL', '0'); pp.setAttribute('indent', '0');
+          const bn = doc.createElementNS(NS_A, 'a:buNone');
+          const bf = all(pp, NS_A, 'buFont')[0];
+          if (bf) pp.replaceChild(bn, bf); else pp.insertBefore(bn, pp.firstChild);
+        }
+        p.appendChild(pp);
+      }
+      let text = (i === 0 && opt.prefixFirst ? opt.prefixFirst : '') + line;
+      const segs = text.split(/\*([^*]+)\*/);
+      segs.forEach((seg, k) => {
+        if (!seg) return;
+        const r = doc.createElementNS(NS_A, 'a:r');
+        r.appendChild(mkRPr(k % 2 ? accent : normal, 'a:rPr'));
+        const t = doc.createElementNS(NS_A, 'a:t');
+        t.textContent = seg;
+        r.appendChild(t);
+        p.appendChild(r);
+      });
+      p.appendChild(mkRPr(endPr || normal, 'a:endParaRPr'));
+      body.appendChild(p);
+    });
+  }
+  // 특정 문단·런의 글자만 바꾸기 (서식 그대로)
+  function setRun(sp, pi, ri, text) {
+    const p = kids(all(sp, NS_P, 'txBody')[0], NS_A, 'p')[pi];
+    if (!p) return;
+    const r = kids(p, NS_A, 'r')[ri];
+    if (r) { kids(r, NS_A, 't')[0].textContent = text; const rp = kids(r, NS_A, 'rPr')[0]; if (rp) rp.removeAttribute('err'); }
+  }
+  function setXfrm(sp, x, y, cx, cy) {
+    const off = all(sp, NS_A, 'off')[0], ext = all(sp, NS_A, 'ext').find((e) => e.parentNode.localName === 'xfrm');
+    if (x != null) off.setAttribute('x', String(Math.round(x)));
+    if (y != null) off.setAttribute('y', String(Math.round(y)));
+    if (cx != null) ext.setAttribute('cx', String(Math.round(cx)));
+    if (cy != null) ext.setAttribute('cy', String(Math.round(cy)));
+  }
+
+  /* ---------- 입력 해석 ---------- */
+  const lines = (s) => String(s || '').replace(/\r/g, '').split('\n').map((l) => l.replace(/\s+$/, ''));
+  const nonEmpty = (s) => lines(s).filter((l) => l.trim());
+  // 가사: 빈 줄로 슬라이드 구분, "간주" 한 줄은 간주 슬라이드, 첫 줄 앞 [마지막] 은 마지막 표시
+  function parseLyrics(text) {
+    const blocks = String(text || '').replace(/\r/g, '').split(/\n\s*\n/).map((b) => lines(b).filter((l) => l.trim()));
+    return blocks.filter((b) => b.length).map((b) => {
+      if (b.length === 1 && /^\(?\s*간\s*주/.test(b[0].trim())) return { kind: 'interlude', lines: ['( 간 주 중 … )'] };
+      let last = false;
+      const ls = b.map((l) => l.trim());
+      if (/^\[마지막\]\s*/.test(ls[0])) { last = true; ls[0] = ls[0].replace(/^\[마지막\]\s*/, ''); }
+      return { kind: last ? 'last' : 'lyric', lines: ls.filter(Boolean) };
+    }).filter((s) => s.lines.length);
+  }
+  // 성경 본문: "2 이에 왕이…" 처럼 절 번호로 시작하는 줄마다 한 장
+  function parseVerses(text) {
+    const out = [];
+    for (const l of nonEmpty(text)) {
+      const m = l.trim().match(/^(\d{1,3})[.\s)]\s*(.+)$/);
+      if (m) out.push({ n: +m[1], text: m[2].trim() });
+      else if (out.length) out[out.length - 1].text += ' ' + l.trim();
+      else out.push({ n: null, text: l.trim() });
+    }
+    return out;
+  }
+  const hasBatchim = (word) => { const c = word.trim().slice(-1).charCodeAt(0); return c >= 0xac00 && c <= 0xd7a3 && (c - 0xac00) % 28 !== 0; };
+
+  /* ---------- 슬라이드 순서 만들기 ---------- */
+  // 각 항목: {proto, section, label, edit(doc), image}
+  function plan(d) {
+    const S = [];
+    const add = (section, label, proto, edit, image, deckSlide) => S.push({ section, label, proto, edit, image, deckSlide });
+    const bible = d.bible || {};
+    const ref = `${bible.chapter || ''}:${bible.verses || ''}`;
+
+    add('시작', '환영', P.welcome, (doc) => {
+      const box = textShapes(doc).find((sp) => spText(sp).includes('헌금'));
+      if (box && bible.book) { setRun(box, 2, 1, bible.book); setRun(box, 2, 3, bible.chapter || ''); setRun(box, 2, 5, bible.verses || ''); }
+    });
+    add('예배의 부름', '제목', P.callTitle);
+    if (d.call && (d.call.ref || d.call.text)) {
+      add('예배의 부름', d.call.ref || '말씀', P.callVerse, (doc) => {
+        const t = textShapes(doc);
+        const r = (d.call.ref || '').trim(); const k = r.lastIndexOf(' ');
+        setRun(t[1], 0, 0, k > 0 ? r.slice(0, k + 1) : r); setRun(t[1], 0, 1, k > 0 ? r.slice(k + 1) : '');
+        const ls = nonEmpty(d.call.text).map((l) => l.trim());
+        fillShape(t[2], ls, { sz: fitSize(ls, 3200, 2000, 8600000, 2900000, 1.25) });
+      });
+    }
+    add('신앙고백', '제목', P.creedTitle);
+    add('신앙고백', '사도신경', P.creed);
+    add('찬양', '빈 화면', P.blank);
+    add('찬양', '제목', P.praiseTitle);
+    add('찬양', '빈 화면', P.blank);
+    (d.songs || []).forEach((song, si) => {
+      const c = si % 2 ? 'orange' : 'blue'; // 홀수번 파랑, 짝수번 주황
+      const name = song.title || `${si + 1}번째 찬양`;
+      const sec = `찬양 ${si + 1} · ${name}`;
+      add(sec, '곡 제목', P.songTitle[c], (doc) => editSongTitle(doc, name));
+      for (const sl of parseLyrics(song.lyrics)) {
+        if (sl.kind === 'interlude') add(sec, '간주', P.interlude[c]);
+        else add(sec, sl.lines[0], sl.kind === 'last' ? P.lyricLast[c] : P.lyric[c], (doc) => {
+          const box = textShapes(doc).find((sp) => spText(sp).trim() !== '마지막');
+          const sz = Math.min(fitOneLine(sl.lines, 5400, 3600, 8700000), fitSize(sl.lines, 5400, 3600, 1e12, 4300000, 1.2));
+          fillShape(box, sl.lines, { sz, prefixFirst: sl.kind === 'last' ? '   ' : '' });
+        });
+      }
+      add(sec, '빈 화면', P.blank);
+    });
+    add('기도', '제목', P.prayerTitle);
+    add('기도', d.prayer || '대표기도', P.prayerPerson, (doc) => { fillShape(textShapes(doc)[1], [d.prayer || '']); });
+    add('기도', '빈 화면', P.blank);
+    if (bible.book) {
+      add('성경봉독', `${bible.book} ${ref}`, P.bibleIntro, (doc) => {
+        const t = textShapes(doc);
+        setRun(t[1], 0, 0, bible.book); setRun(t[1], 1, 0, bible.chapter || ''); setRun(t[1], 1, 2, bible.verses || '');
+        const ab = (bible.abbr || '').trim() || bible.book;
+        setRun(t[2], 0, 4, ab + '’'); setRun(t[2], 0, 5, hasBatchim(ab) ? '을' : '를');
+      });
+      const vs = parseVerses(bible.text);
+      vs.forEach((v, i) => {
+        const isLast = i === vs.length - 1;
+        add('성경봉독', v.n ? `${v.n}절` : '본문', isLast ? P.bibleVerseAmen : P.bibleVerse, (doc) => {
+          const t = textShapes(doc);
+          setRun(t[0], 0, 1, bible.book); setRun(t[0], 0, 3, ref);
+          const width = 8834691 - (v.n ? 742950 : 0) - 182880;
+          const sz = fitSize([v.text], 4000, 2400, width, 3900000, 1.22);
+          fillShape(t[1], [v.text], { sz, startAt: v.n || undefined, noNumber: !v.n });
+        });
+      });
+      add('성경봉독', '빈 화면', P.blank);
+    }
+    if (d.choir) { add('찬양대', '찬양대', P.choir); add('찬양대', '빈 화면', P.blank); }
+    add('말씀', d.sermonTitle || '오늘의 말씀', P.sermonTitle, (doc) => { fillShape(textShapes(doc)[1], [d.sermonTitle || '']); });
+    if (d.sermonDeck) (d.sermonDeck.include || []).forEach((n) => add('말씀', `설교 PPT ${n}번`, null, null, null, n));
+    (d.sermonImages || []).forEach((img, i) => add('말씀', img.name || `그림 ${i + 1}`, P.image, null, img));
+    add('말씀', '빈 화면', P.blank);
+    add('봉헌', '제목', P.offeringTitle);
+    for (const sl of parseLyrics(d.offeringLyrics)) {
+      if (sl.kind === 'interlude') add('봉헌', '간주', P.interlude.orange);
+      else add('봉헌', sl.lines[0], sl.kind === 'last' ? P.lyricLast.orange : P.offeringLyric, (doc) => {
+        const box = textShapes(doc).find((sp) => spText(sp).trim() !== '마지막');
+        const sz = Math.min(fitOneLine(sl.lines, 5400, 3600, 8700000), fitSize(sl.lines, 5400, 3600, 1e12, 4300000, 1.2));
+        fillShape(box, sl.lines, { sz, prefixFirst: sl.kind === 'last' ? '   ' : '' });
+      });
+    }
+    add('봉헌', '빈 화면', P.blank);
+    add('봉헌', d.offeringPrayer || '봉헌기도', P.offeringPrayer, (doc) => { fillShape(textShapes(doc)[1], [d.offeringPrayer || '']); });
+    add('마침', '축도', P.benediction);
+    add('마침', '빈 화면', P.blank);
+    add('광고', '제목', P.noticeTitle);
+    const quiz = (d.quiz || []).filter((q) => (q.q || '').trim());
+    if (quiz.length) {
+      add('광고', '말씀퀴즈 제목', P.quizTitle);
+      quiz.forEach((q, i) => add('광고', `퀴즈 ${i + 1}`, P.quiz, (doc) => {
+        const t = textShapes(doc);
+        const ls = nonEmpty(q.q).map((l) => l.trim());
+        fillShape(t[1], ls, { sz: fitSize(ls, 2800, 2000, 8500000, 2350000, 1.3) });
+        fillShape(t[3], [q.a || '']);
+      }));
+    }
+    if ((d.notice || '').trim()) {
+      add('광고', '광고합니다', P.notice, (doc) => {
+        const t = textShapes(doc);
+        const ls = lines(d.notice);
+        while (ls.length && !ls[ls.length - 1].trim()) ls.pop();
+        fillShape(t[1], ls, { sz: fitSize(ls, 2400, 1600, 8500000, 3700000, 1.25) });
+      });
+    }
+    (d.posters || []).forEach((img, i) => add(d.posterLabel || '암송 말씀', img.name || `그림 ${i + 1}`, P.image, null, img));
+    add('마침', '인사', P.end);
+    return S;
+  }
+
+  function editSongTitle(doc, title) {
+    const rect = shapeByName(doc, '모서리가 둥근 직사각형 46');
+    const box = textShapes(doc)[0];
+    const parts = title.split(/\s*\/\s*/); // "삶으로 믿음으로 / 보여줘요" 처럼 / 로 줄 나눔
+    const base = 8625, pad = 900000, maxW = 8300000;
+    let sz = base;
+    const tw = (p, z) => strW(p, z) * 0.88;
+    const widest = Math.max(...parts.map((p) => tw(p, base)));
+    if (widest + pad > maxW) sz = Math.max(4400, Math.floor(base * (maxW - pad) / widest / 100) * 100);
+    fillShape(box, parts, { sz });
+    const w = Math.min(maxW, Math.max(...parts.map((p) => tw(p, sz))) + pad * (sz / base) + 300000);
+    const lineH = sz / 100 * 12700 * 1.2;
+    const h = parts.length * lineH + 380000;
+    const cy = SLIDE_H * 0.47;
+    if (rect) setXfrm(rect, (SLIDE_W - w) / 2, cy - h / 2, w, h);
+    setXfrm(box, 166977, cy - (parts.length * lineH + 120000) / 2, 8810046, parts.length * lineH + 120000);
+  }
+
+  /* ---------- 다른 PPT의 슬라이드 옮기기 ---------- */
+  const dirOf = (p) => p.slice(0, p.lastIndexOf('/'));
+  const relsOf = (p) => `${dirOf(p)}/_rels/${p.slice(p.lastIndexOf('/') + 1)}.rels`;
+  function resolvePath(base, target) {
+    if (target.startsWith('/')) return target.slice(1);
+    const parts = dirOf(base).split('/');
+    for (const seg of target.split('/')) { if (seg === '..') parts.pop(); else if (seg !== '.') parts.push(seg); }
+    return parts.join('/');
+  }
+  function relTo(from, to) {
+    const a = dirOf(from).split('/'), b = to.split('/');
+    let i = 0; while (i < a.length && i < b.length - 1 && a[i] === b[i]) i++;
+    return '../'.repeat(a.length - i) + b.slice(i).join('/');
+  }
+  async function openDeck(JSZip, buf) {
+    const zip = await JSZip.loadAsync(buf);
+    const pres = parseXml(await zip.file('ppt/presentation.xml').async('string'));
+    const rels = parseXml(await zip.file('ppt/_rels/presentation.xml.rels').async('string'));
+    const target = {};
+    [...rels.documentElement.childNodes].filter((n) => n.nodeType === 1).forEach((r) => { target[r.getAttribute('Id')] = r.getAttribute('Target'); });
+    const order = all(pres, NS_P, 'sldId').map((s) => resolvePath('ppt/presentation.xml', target[s.getAttributeNS(NS_R, 'id')]));
+    const sz = all(pres, NS_P, 'sldSz')[0];
+    return { zip, order, size: sz ? { cx: +sz.getAttribute('cx'), cy: +sz.getAttribute('cy') } : null };
+  }
+  // 설교 PPT 미리보기: 슬라이드마다 글 몇 자, 숨김 여부, 애니메이션 여부
+  async function inspectDeck(JSZip, buf) {
+    const dk = await openDeck(JSZip, buf);
+    const slides = [];
+    for (let i = 0; i < dk.order.length; i++) {
+      const xml = await dk.zip.file(dk.order[i]).async('string');
+      const doc = parseXml(xml);
+      const text = all(doc, NS_A, 't').map((t) => t.textContent).join(' ').replace(/\s+/g, ' ').trim();
+      slides.push({ n: i + 1, text: text.slice(0, 50), hidden: doc.documentElement.getAttribute('show') === '0', anim: /presetClass=/.test(xml), pics: all(doc, NS_P, 'pic').length });
+    }
+    return { count: slides.length, slides, size: dk.size, sameSize: !dk.size || (Math.abs(dk.size.cx / dk.size.cy - SLIDE_W / SLIDE_H) < 0.01) };
+  }
+  // 슬라이드 크기가 다른 PPT: 위치·크기·글자 크기를 비율대로 줄이고 가운데로
+  const SHAPES = new Set(['sp', 'pic', 'grpSp', 'graphicFrame', 'cxnSp', 'contentPart']);
+  const SCALE_ATTRS = ['marL', 'marR', 'indent', 'lIns', 'tIns', 'rIns', 'bIns', 'defTabSz'];
+  function scaleXml(xml, f, dx, dy) {
+    const doc = parseXml(xml);
+    const R = (v) => String(Math.round(+v * f));
+    for (const el of [...doc.getElementsByTagName('*')]) {
+      const ln = el.localName, ns = el.namespaceURI;
+      if (ns === NS_A && (ln === 'off' || ln === 'ext') && el.parentNode && el.parentNode.localName === 'xfrm') {
+        let owner = el.parentNode;
+        while (owner && !(owner.namespaceURI === NS_P && (SHAPES.has(owner.localName) || owner.localName === 'spTree'))) owner = owner.parentNode;
+        if (!owner || owner.localName === 'spTree') continue;
+        const top = owner.parentNode && owner.parentNode.localName === 'spTree';
+        if (ln === 'off') { el.setAttribute('x', String(Math.round(+el.getAttribute('x') * f + (top ? dx : 0)))); el.setAttribute('y', String(Math.round(+el.getAttribute('y') * f + (top ? dy : 0)))); }
+        else if (el.hasAttribute('cx')) { el.setAttribute('cx', R(el.getAttribute('cx'))); el.setAttribute('cy', R(el.getAttribute('cy'))); }
+        continue;
+      }
+      if (ns !== NS_A) continue;
+      if ((ln === 'rPr' || ln === 'defRPr' || ln === 'endParaRPr') && el.hasAttribute('sz')) el.setAttribute('sz', String(Math.max(100, Math.round(+el.getAttribute('sz') * f))));
+      if (ln === 'spcPts' && el.hasAttribute('val')) el.setAttribute('val', R(el.getAttribute('val')));
+      if (ln === 'ln' && el.hasAttribute('w')) el.setAttribute('w', R(el.getAttribute('w')));
+      if (ln === 'gridCol' && el.hasAttribute('w')) el.setAttribute('w', R(el.getAttribute('w')));
+      if (ln === 'tr' && el.hasAttribute('h')) el.setAttribute('h', R(el.getAttribute('h')));
+      if (ln === 'tab' && el.hasAttribute('pos')) el.setAttribute('pos', R(el.getAttribute('pos')));
+      for (const a of SCALE_ATTRS) if (el.hasAttribute(a)) el.setAttribute(a, R(el.getAttribute(a)));
+      if (/Shdw$|^glow$|^softEdge$|^reflection$/.test(ln)) for (const a of ['blurRad', 'dist', 'rad', 'stA']) if (a !== 'stA' && el.hasAttribute(a)) el.setAttribute(a, R(el.getAttribute(a)));
+    }
+    return serialize(doc);
+  }
+  async function makeDeckCopier(JSZip, destZip, destCt, destPres, buf, items) {
+    const dk = await openDeck(JSZip, buf);
+    const src = dk.zip;
+    const srcCt = parseXml(await src.file('[Content_Types].xml').async('string'));
+    const ctRoot = destCt.documentElement;
+    const srcOverride = {}, srcDefault = {};
+    [...srcCt.documentElement.childNodes].filter((n) => n.nodeType === 1).forEach((n) => {
+      if (n.localName === 'Override') srcOverride[n.getAttribute('PartName').slice(1)] = n.getAttribute('ContentType');
+      else srcDefault[n.getAttribute('Extension').toLowerCase()] = n.getAttribute('ContentType');
+    });
+    const destDefaults = new Set([...ctRoot.childNodes].filter((n) => n.nodeType === 1 && n.localName === 'Default').map((n) => n.getAttribute('Extension').toLowerCase()));
+    const relType = (r) => r.getAttribute('Type').split('/').pop();
+    let f = 1, dx = 0, dy = 0;
+    if (dk.size && (dk.size.cx !== SLIDE_W || dk.size.cy !== SLIDE_H)) {
+      f = Math.min(SLIDE_W / dk.size.cx, SLIDE_H / dk.size.cy);
+      dx = (SLIDE_W - dk.size.cx * f) / 2; dy = (SLIDE_H - dk.size.cy * f) / 2;
+    }
+    const scalable = /(slide|slideLayout|slideMaster)\+xml$/;
+    const relsDoc = async (p) => { const f = src.file(relsOf(p)); return f ? parseXml(await f.async('string')) : null; };
+
+    // 슬라이드 번호 → 원본 경로, 새 경로
+    const slideMap = {};
+    for (const it of items) slideMap[dk.order[it.deckSlide - 1]] = it.deckDest;
+    const firstDest = items[0].deckDest;
+    // 쓰이는 레이아웃만 옮긴다
+    const usedLayouts = new Set();
+    for (const it of items) {
+      const p = dk.order[it.deckSlide - 1], rd = await relsDoc(p);
+      if (rd) [...rd.documentElement.childNodes].filter((n) => n.nodeType === 1 && relType(n) === 'slideLayout').forEach((r) => usedLayouts.add(resolvePath(p, r.getAttribute('Target'))));
+    }
+    // 마스터·레이아웃 id 겹치지 않게
+    let nextId = 2147483648;
+    const bump = (s) => { for (const m of s.matchAll(/<p:(?:sldMasterId|sldLayoutId)\b[^>]*\bid="(\d+)"/g)) nextId = Math.max(nextId, +m[1] + 1); };
+    bump(serialize(destPres));
+    for (const f of Object.keys(destZip.files).filter((n) => /^ppt\/slideMasters\/[^/]+\.xml$/.test(n))) bump(await destZip.file(f).async('string'));
+
+    const copied = {}, used = new Set(Object.keys(destZip.files)), masters = [];
+    const uniqueName = (p) => {
+      const d = dirOf(p), base = p.slice(p.lastIndexOf('/') + 1);
+      let name = `${d}/ser_${base}`, k = 2;
+      while (used.has(name)) name = `${d}/ser${k++}_${base}`;
+      used.add(name); return name;
+    };
+    const addCT = (srcPath, dest) => {
+      if (srcOverride[srcPath]) {
+        const o = destCt.createElementNS(ctRoot.namespaceURI, 'Override');
+        o.setAttribute('PartName', '/' + dest); o.setAttribute('ContentType', srcOverride[srcPath]);
+        ctRoot.appendChild(o);
+      } else {
+        const ext = srcPath.split('.').pop().toLowerCase();
+        if (!destDefaults.has(ext) && srcDefault[ext]) {
+          const d = destCt.createElementNS(ctRoot.namespaceURI, 'Default');
+          d.setAttribute('Extension', ext); d.setAttribute('ContentType', srcDefault[ext]);
+          ctRoot.insertBefore(d, ctRoot.firstChild); destDefaults.add(ext);
+        }
+      }
+    };
+    async function copyPart(srcPath, destPath) {
+      if (copied[srcPath]) return copied[srcPath];
+      const fl = src.file(srcPath);
+      if (!fl) return null;
+      const dest = destPath || uniqueName(srcPath);
+      used.add(dest);
+      copied[srcPath] = dest;
+      addCT(srcPath, dest);
+      const isMaster = /slideMaster\+xml$/.test(srcOverride[srcPath] || '');
+      const removed = new Set();
+      const rd = await relsDoc(srcPath);
+      if (rd) {
+        for (const r of [...rd.documentElement.childNodes].filter((n) => n.nodeType === 1)) {
+          if (r.getAttribute('TargetMode') === 'External') continue;
+          const t = relType(r), tgt = resolvePath(srcPath, r.getAttribute('Target'));
+          if (t === 'notesSlide' || t === 'comments' || t === 'commentAuthors') { rd.documentElement.removeChild(r); continue; }
+          if (t === 'slide') { r.setAttribute('Target', relTo(dest, slideMap[tgt] || firstDest)); continue; }
+          if (t === 'slideLayout' && isMaster && !usedLayouts.has(tgt)) { removed.add(r.getAttribute('Id')); rd.documentElement.removeChild(r); continue; }
+          const nd = await copyPart(tgt);
+          if (nd) r.setAttribute('Target', relTo(dest, nd)); else rd.documentElement.removeChild(r);
+        }
+        destZip.file(relsOf(dest), serialize(rd));
+      }
+      if (isMaster) {
+        const doc = parseXml(f !== 1 ? scaleXml(await fl.async('string'), f, dx, dy) : await fl.async('string'));
+        for (const el of all(doc, NS_P, 'sldLayoutId')) {
+          if (removed.has(el.getAttributeNS(NS_R, 'id'))) el.parentNode.removeChild(el);
+          else el.setAttribute('id', String(nextId++));
+        }
+        destZip.file(dest, serialize(doc));
+        masters.push(dest);
+      } else if (f !== 1 && scalable.test(srcOverride[srcPath] || '')) {
+        destZip.file(dest, scaleXml(await fl.async('string'), f, dx, dy));
+      } else {
+        destZip.file(dest, await fl.async('uint8array'));
+      }
+      return dest;
+    }
+    return {
+      size: dk.size,
+      copySlide: (n, dest) => copyPart(dk.order[n - 1], dest),
+      registerMasters(presRels) {
+        const lst = all(destPres, NS_P, 'sldMasterIdLst')[0];
+        masters.forEach((m, i) => {
+          const rid = `rIdSerM${i + 1}`;
+          const r = presRels.createElementNS(presRels.documentElement.namespaceURI, 'Relationship');
+          r.setAttribute('Id', rid);
+          r.setAttribute('Type', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideMaster');
+          r.setAttribute('Target', m.replace(/^ppt\//, ''));
+          presRels.documentElement.appendChild(r);
+          const el = destPres.createElementNS(NS_P, 'p:sldMasterId');
+          el.setAttribute('id', String(nextId++));
+          el.setAttributeNS(NS_R, 'r:id', rid);
+          lst.appendChild(el);
+        });
+      },
+    };
+  }
+
+  /* ---------- PPT 만들기 ---------- */
+  async function generate(JSZip, templateBuf, data) {
+    const zip = await JSZip.loadAsync(templateBuf);
+    const S = plan(data);
+    const presPath = 'ppt/presentation.xml', presRelsPath = 'ppt/_rels/presentation.xml.rels', ctPath = '[Content_Types].xml';
+    const pres = parseXml(await zip.file(presPath).async('string'));
+    const presRels = parseXml(await zip.file(presRelsPath).async('string'));
+    const ct = parseXml(await zip.file(ctPath).async('string'));
+
+    // 견본 읽어두기
+    const protos = {};
+    for (const n of new Set(S.map((s) => s.proto).filter(Boolean))) {
+      protos[n] = {
+        xml: await zip.file(`ppt/slides/slide${n}.xml`).async('string'),
+        rels: await zip.file(`ppt/slides/_rels/slide${n}.xml.rels`).async('string'),
+      };
+    }
+    // 기존 슬라이드 모두 제거
+    const relRoot = presRels.documentElement;
+    [...relRoot.childNodes].filter((r) => r.nodeType === 1 && /\/slide$/.test(r.getAttribute('Type'))).forEach((r) => relRoot.removeChild(r));
+    const lst = all(pres, NS_P, 'sldIdLst')[0];
+    while (lst.firstChild) lst.removeChild(lst.firstChild);
+    const ctRoot = ct.documentElement;
+    [...ctRoot.childNodes].filter((o) => o.nodeType === 1 && /^\/ppt\/slides\//.test(o.getAttribute('PartName') || '')).forEach((o) => ctRoot.removeChild(o));
+    zip.folder('ppt/slides').forEach((rel) => zip.remove('ppt/slides/' + rel));
+
+    function addSlideRef(k) {
+      const r = presRels.createElementNS(relRoot.namespaceURI, 'Relationship');
+      r.setAttribute('Id', `rIdGen${k}`);
+      r.setAttribute('Type', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide');
+      r.setAttribute('Target', `slides/slide${k}.xml`);
+      relRoot.appendChild(r);
+      const sid = pres.createElementNS(NS_P, 'p:sldId');
+      sid.setAttribute('id', String(1000 + k));
+      sid.setAttributeNS(NS_R, 'r:id', `rIdGen${k}`);
+      lst.appendChild(sid);
+    }
+    const exts = new Set([...ctRoot.childNodes].filter((n) => n.nodeType === 1 && n.localName === 'Default').map((n) => n.getAttribute('Extension').toLowerCase()));
+    const MIME = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp' };
+
+    // 설교 PPT: 원본 서식(마스터·레이아웃·테마)과 애니메이션을 그대로 옮긴다
+    let deckCopier = null;
+    if (S.some((s) => s.deckSlide) && data.sermonDeck) {
+      const slideMap = {};
+      S.forEach((s, i) => { if (s.deckSlide) s.deckDest = `ppt/slides/slide${i + 1}.xml`; });
+      deckCopier = await makeDeckCopier(JSZip, zip, ct, pres, data.sermonDeck.data, S.filter((s) => s.deckSlide));
+    }
+    for (let i = 0; i < S.length; i++) {
+      const k = i + 1, s = S[i];
+      if (s.deckSlide) {
+        await deckCopier.copySlide(s.deckSlide, s.deckDest);
+        addSlideRef(k);
+        continue;
+      }
+      const doc = parseXml(protos[s.proto].xml);
+      let rels = protos[s.proto].rels;
+      if (s.edit) s.edit(doc);
+      if (s.image) {
+        let ext = (s.image.ext || 'png').toLowerCase();
+        if (!MIME[ext]) ext = 'png';
+        const media = `gen${k}.${ext}`;
+        zip.file(`ppt/media/${media}`, s.image.data);
+        if (!exts.has(ext)) {
+          const def = ct.createElementNS(ctRoot.namespaceURI, 'Default');
+          def.setAttribute('Extension', ext); def.setAttribute('ContentType', MIME[ext]);
+          ctRoot.insertBefore(def, ctRoot.firstChild); exts.add(ext);
+        }
+        const pic = all(doc, NS_P, 'pic')[0];
+        const rid = all(pic, NS_A, 'blip')[0].getAttributeNS(NS_R, 'embed');
+        rels = rels.replace(new RegExp(`(Id="${rid}"[^>]*Target=")[^"]+"`), `$1../media/${media}"`)
+                   .replace(new RegExp(`(Target=")[^"]+("[^>]*Id="${rid}")`), `$1../media/${media}$2`);
+        all(pic, NS_A, 'srcRect').forEach((n) => n.parentNode.removeChild(n));
+        const iw = s.image.w || 16, ih = s.image.h || 9;
+        const scale = Math.min(SLIDE_W / iw, SLIDE_H / ih);
+        const cx = iw * scale, cy = ih * scale;
+        const xf = kids(kids(pic, NS_P, 'spPr')[0], NS_A, 'xfrm')[0];
+        kids(xf, NS_A, 'off')[0].setAttribute('x', String(Math.round((SLIDE_W - cx) / 2)));
+        kids(xf, NS_A, 'off')[0].setAttribute('y', String(Math.round((SLIDE_H - cy) / 2)));
+        kids(xf, NS_A, 'ext')[0].setAttribute('cx', String(Math.round(cx)));
+        kids(xf, NS_A, 'ext')[0].setAttribute('cy', String(Math.round(cy)));
+      }
+      zip.file(`ppt/slides/slide${k}.xml`, serialize(doc));
+      zip.file(`ppt/slides/_rels/slide${k}.xml.rels`, rels);
+      addSlideRef(k);
+      const o = ct.createElementNS(ctRoot.namespaceURI, 'Override');
+      o.setAttribute('PartName', `/ppt/slides/slide${k}.xml`);
+      o.setAttribute('ContentType', 'application/vnd.openxmlformats-officedocument.presentationml.slide+xml');
+      ctRoot.appendChild(o);
+    }
+    if (deckCopier) deckCopier.registerMasters(presRels);
+    zip.file(presPath, serialize(pres));
+    zip.file(presRelsPath, serialize(presRels));
+    zip.file(ctPath, serialize(ct));
+    const app = zip.file('docProps/app.xml');
+    if (app) {
+      let a = await app.async('string');
+      a = a.replace(/<Slides>\d+<\/Slides>/, `<Slides>${S.length}</Slides>`).replace(/<Notes>\d+<\/Notes>/, '<Notes>0</Notes>');
+      zip.file('docProps/app.xml', a);
+    }
+    return zip.generateAsync({ type: 'uint8array', compression: 'DEFLATE', compressionOptions: { level: 6 } });
+  }
+
+  /* ---------- 지난 PPT에서 찬양 가사 가져오기 ---------- */
+  async function importSongs(JSZip, buf) {
+    const zip = await JSZip.loadAsync(buf);
+    const pres = parseXml(await zip.file('ppt/presentation.xml').async('string'));
+    const rels = parseXml(await zip.file('ppt/_rels/presentation.xml.rels').async('string'));
+    const target = {};
+    [...rels.documentElement.childNodes].filter((n) => n.nodeType === 1).forEach((r) => { target[r.getAttribute('Id')] = r.getAttribute('Target'); });
+    const order = all(pres, NS_P, 'sldId').map((s) => 'ppt/' + target[s.getAttributeNS(NS_R, 'id')].replace(/^\/?ppt\//, ''));
+    const songs = [];
+    let cur = null, mode = null;
+    const finish = () => { if (cur && cur.blocks.length) songs.push({ title: cur.title || cur.blocks.find((b) => b !== '간주')?.split('\n')[0].replace('[마지막] ', ''), color: cur.color || 'orange', lyrics: cur.blocks.join('\n\n'), offering: !cur.title }); cur = null; };
+    for (const path of order) {
+      const f = zip.file(path); if (!f) continue;
+      const doc = parseXml(await f.async('string'));
+      const shapes = textShapes(doc);
+      const texts = shapes.map((sp) => spText(sp).trim());
+      const isLastTag = texts.includes('마지막');
+      const content = shapes.filter((sp) => spText(sp).trim() !== '마지막');
+      const isTitle = !!shapeByName(doc, '모서리가 둥근 직사각형 46') && content.length === 1 && !isLastTag;
+      if (!content.length) { finish(); mode = null; continue; }
+      if (texts.some((t) => /^봉\s*헌$/.test(t))) { finish(); cur = { title: '', blocks: [], color: 'orange' }; mode = 'song'; continue; }
+      if (isTitle) {
+        finish();
+        const paras = kids(all(content[0], NS_P, 'txBody')[0], NS_A, 'p').map((p) => all(p, NS_A, 't').map((t) => t.textContent).join('').trim()).filter(Boolean);
+        cur = { title: paras.join(' / '), blocks: [], color: null }; mode = 'song'; continue;
+      }
+      if (mode === 'song' && content.length === 1 && cur) {
+        const sp = content[0];
+        const paras = kids(all(sp, NS_P, 'txBody')[0], NS_A, 'p').map((p) => all(p, NS_A, 't').map((t) => t.textContent).join('').trim()).filter(Boolean);
+        if (!paras.length) continue;
+        if (!cur.color) { const c = all(sp, NS_A, 'srgbClr')[0]; const v = c ? c.getAttribute('val') : 'FF9E28'; cur.color = parseInt(v.slice(4, 6), 16) > parseInt(v.slice(0, 2), 16) ? 'blue' : 'orange'; }
+        if (paras.length === 1 && /간\s*주/.test(paras[0])) cur.blocks.push('간주');
+        else cur.blocks.push((isLastTag ? '[마지막] ' : '') + paras.join('\n'));
+        continue;
+      }
+      finish(); mode = null;
+    }
+    finish();
+    return songs;
+  }
+
+  global.KidsPPT = { generate, importSongs, inspectDeck, plan, parseLyrics, parseVerses };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const BOOKS = [['창세기','창'],['출애굽기','출'],['레위기','레'],['민수기','민'],['신명기','신'],['여호수아','수'],['사사기','삿'],['룻기','룻'],['사무엘상','삼상'],['사무엘하','삼하'],['열왕기상','왕상'],['열왕기하','왕하'],['역대상','대상'],['역대하','대하'],['에스라','스'],['느헤미야','느'],['에스더','에'],['욥기','욥'],['시편','시'],['잠언','잠'],['전도서','전'],['아가','아'],['이사야','사'],['예레미야','렘'],['예레미야애가','애'],['에스겔','겔'],['다니엘','단'],['호세아','호'],['요엘','욜'],['아모스','암'],['오바댜','옵'],['요나','욘'],['미가','미'],['나훔','나'],['하박국','합'],['스바냐','습'],['학개','학'],['스가랴','슥'],['말라기','말'],['마태복음','마'],['마가복음','막'],['누가복음','눅'],['요한복음','요'],['사도행전','행'],['로마서','롬'],['고린도전서','고전'],['고린도후서','고후'],['갈라디아서','갈'],['에베소서','엡'],['빌립보서','빌'],['골로새서','골'],['데살로니가전서','살전'],['데살로니가후서','살후'],['디모데전서','딤전'],['디모데후서','딤후'],['디도서','딛'],['빌레몬서','몬'],['히브리서','히'],['야고보서','약'],['베드로전서','벧전'],['베드로후서','벧후'],['요한일서','요일'],['요한이서','요이'],['요한삼서','요삼'],['유다서','유'],['요한계시록','계']];
+  const ABBR = Object.fromEntries(BOOKS);
+  $('books').innerHTML = BOOKS.map(([b]) => `<option value="${b}"></option>`).join('');
+
+  /* ---------- 기본 내용: 10월 11일 예배 ---------- */
+  const SAMPLE_SONGS = [{"title": "너와 나의 모습이", "color": "blue", "lyrics": "너와 나의 모습이 예수님 닮아\n너와 나의 모습이 예수님 닮아\n하루 이틀 매일매일 지날 때 마다\n더 닮아가길 원해요\n\n너와 나의 모습이 예수님 닮아\n너와 나의 모습이 예수님 닮아\n하루 이틀 매일매일 지날 때 마다\n더 닮아가길 원해요\n\n예수님 사랑이 넘쳐넘쳐\n예수님 축복이 흘러흘러\n예수님 은혜가 가득가득\n당신과 함께하길 원해요\n\n간주\n\n너와 나의 모습이 예수님 닮아\n너와 나의 모습이 예수님 닮아\n하루 이틀 매일매일 지날 때 마다\n더 닮아가길 원해요\n\n너와 나의 모습이 예수님 닮아\n너와 나의 모습이 예수님 닮아\n하루 이틀 매일매일 지날 때 마다\n더 닮아가길 원해요\n\n예수님 사랑이 넘쳐넘쳐\n예수님 축복이 흘러흘러\n예수님 은혜가 가득가득\n당신과 함께하길 원해요\n\n[마지막] 예수님 사랑이 넘쳐넘쳐\n예수님 축복이 흘러흘러\n예수님 은혜가 가득가득\n당신과 함께하길 원해요\n\n[마지막] 당신과 함께하길 원해요\n당신과 함께하길 원해요", "offering": false}, {"title": "삶으로 믿음으로 / 보여줘요", "color": "orange", "lyrics": "나는 믿네 주 하나님\n날 사랑하심\n나는 믿네 주 예수님\n내 주인 되심\n\n나는 믿네 주 성령님\n내 안에 사심\n내 모든 삶 살아 있는\n믿음의 증거\n\n내 삶으로 내 믿음으로\n보게 해 주리\n드러내리 보여주리\n나의 참 믿음\n\n내 삶으로 내 믿음으로\n보게 해 주리\n드러내리 보여주리\n나의 참 믿음\n\n간주\n\n나는 믿네 주 하나님\n날 사랑하심\n나는 믿네 주 예수님\n내 주인 되심\n\n나는 믿네 주 성령님\n내 안에 사심\n내 모든 삶 살아 있는\n믿음의 증거\n\n내 삶으로 내 믿음으로\n보게 해 주리\n드러내리 보여주리\n나의 참 믿음\n\n내 삶으로 내 믿음으로\n보게 해 주리\n드러내리 보여주리\n나의 참 믿음\n\n[마지막] 내 삶으로 내 믿음으로\n보게 해 주리\n드러내리 보여주리\n나의 참 믿음\n\n[마지막] 내 삶으로 내 믿음으로\n보게 해 주리\n드러내리 보여주리\n나의 참 믿음", "offering": false}, {"title": "조이댄스", "color": "blue", "lyrics": "우울한 일 있을 때\n슬픈 일이 있을 때\n마음이 답답하고\n소리치고 싶을 때\n\n주님 앞에 나와서\n다같이 소리쳐요 조이댄스\n\n우울한 일 있을 때\n슬픈 일이 있을 때\n마음이 답답하고\n소리치고 싶을 때\n\n주님 앞에 나와서\n다같이 소리쳐요 조이댄스\n\n춤 춰요 신나게\n더 높이 뛰어요 조이댄스\n흔들어 신나게\n더 높이 뛰어요 조이댄스\n\n간주\n\n우울한 일 있을 때\n슬픈 일이 있을 때\n마음이 답답하고\n소리치고 싶을 때\n\n주님 앞에 나와서\n다같이 소리쳐요 조이댄스\n\n우울한 일 있을 때\n슬픈 일이 있을 때\n마음이 답답하고\n소리치고 싶을 때\n\n주님 앞에 나와서\n다같이 소리쳐요 조이댄스\n\n춤 춰요 신나게\n더 높이 뛰어요 조이댄스\n흔들어 신나게\n더 높이 뛰어요 조이댄스\n\n나처럼 해봐요 (나처럼 해봐요)\n나처럼 해봐요 (나처럼 해봐요)\n나처럼 해봐요 (나처럼 해봐요)\n나처럼 해봐요 (나처럼 해봐요)\n\n나처럼 해봐\n나처럼 해봐\n나처럼 해봐요\n\n[마지막] 춤 춰요 신나게\n더 높이 뛰어요 조이댄스\n흔들어 신나게\n더 높이 뛰어요 조이댄스\n\n[마지막] 조이댄스\n조이댄스", "offering": false}, {"title": "푯대를 향하여", "color": "orange", "lyrics": "하늘을 향해 달리는\n경주는 시작되고\n내 안에 새긴 넘버\n난 주님의 선수\n\n푯대를 향하여\n하나님의 부르심 받아\n즐거이 전진하네\n\n지치고 힘들어도\n주님만 바라보며\nGoing to a signpost\n푯대를 향하여\n\n어려움이 다가와도\n결코 멈추지 않는\nGoing to a signpost\n푯대를 향하여\n\n하늘을 향해 달리는\n경주는 시작되고\n내 안에 새긴 넘버\n난 주님의 선수\n\n푯대를 향하여\n하나님의 부르심 받아\n즐거이 전진하네\n\n지치고 힘들어도\n주님만 바라보며\nGoing to a signpost\n푯대를 향하여\n\n어려움이 다가와도\n결코 멈추지 않는\nGoing to a signpost\n푯대를 향하여\n\n간주\n\n지치고 힘들어도\n주님만 바라보며\nGoing to a signpost\n푯대를 향하여\n\n어려움이 다가와도\n결코 멈추지 않는\nGoing to a signpost\n푯대를 향하여\n\n[마지막] 지치고 힘들어도\n주님만 바라보며\nGoing to a signpost\n푯대를 향하여\n\n[마지막] 어려움이 다가와도\n결코 멈추지 않는\nGoing to a signpost\n푯대를 향하여", "offering": false}, {"title": "온 맘 다해", "color": "blue", "lyrics": "주님과 함께 하는\n이 고요한 시간\n주님의 보좌 앞에\n내 마음을 쏟네\n\n모든 것 아시는 주님께\n감출 것 없네\n내 맘과 정성 다해\n주 바라나이다\n\n주님과 함께 하는\n이 고요한 시간\n주님의 보좌 앞에\n내 마음을 쏟네\n\n모든 것 아시는 주님께\n감출 것 없네\n내 맘과 정성 다해\n주 바라나이다\n\n온 맘 다해 사랑합니다\n온 맘 다해 주 알기 원하네\n내 모든 삶 당신 것이니\n주만 섬기리 온 맘 다해\n\n나 염려하잖아도\n내 쓸 것 아시니\n나 오직 주의 얼굴\n구하게 하소서\n\n다 이해 할 수 없을 때라도\n감사하며\n날마다 순종하며\n주 따르오리다\n\n온 맘 다해 사랑합니다\n온 맘 다해 주 알기 원하네\n내 모든 삶 당신 것이니\n주만 섬기리 온 맘 다해\n\n온 맘 다해 사랑합니다\n온 맘 다해 주 알기 원하네\n내 모든 삶 당신 것이니\n주만 섬기리 온 맘 다해\n\n온 맘 다해 사랑합니다\n온 맘 다해 주 알기 원하네\n내 모든 삶 당신 것이니\n주만 섬기리 온 맘 다해\n\n[마지막] 온 맘 다해 사랑합니다\n온 맘 다해 주 알기 원하네\n내 모든 삶 당신 것이니\n주만 섬기리 온 맘 다해\n\n[마지막] 주만 섬기리 온 맘 다해", "offering": false}, {"title": "봉헌 · 주를 예배하는 삶", "color": "orange", "lyrics": "주를 예배하는 삶\n주를 기뻐하는 삶\n내 삶의 가장 소중한 기쁨이요\n\n가난한 과부가 드린\n두 렙돈처럼\n내 삶의 모든 걸 드립니다\n\n주님께 드리는\n나의 모든 삶\n오직 주만 받으소서\n\n주를 예배하는 삶\n주를 기뻐하는 삶\n내 삶의 가장 소중한 기쁨이요\n\n가난한 과부가 드린\n두 렙돈처럼\n내 삶의 모든 걸 드립니다", "offering": true}];
+  function nextSunday() {
+    const d = new Date(); d.setDate(d.getDate() + ((7 - d.getDay()) % 7 || 7));
+    return d.toISOString().slice(0, 10);
+  }
+  const uid = () => Math.random().toString(36).slice(2, 9);
+  const DEFAULT = {
+    date: nextSunday(),
+    call: { ref: '요한복음 15:4', text: '내 안에 거하라 나도 너희 안에 거하리라\n가지가 포도나무에 붙어 있지 아니하면\n스스로 열매를 맺을 수 없음 같이\n너희도 내 안에 있지 아니하면 그러하리라' },
+    songs: SAMPLE_SONGS.filter((s) => !s.offering).map((s) => ({ id: uid(), title: s.title, color: s.color, lyrics: s.lyrics })),
+    prayer: '정은채 어린이',
+    bible: { book: '열왕기하', chapter: '23', verses: '2~3', abbr: '왕하', text: '2 이에 왕이 여호와의 성전에 올라가매 유다 모든 사람과 예루살렘 주민과 제사장들과 선지자들과 모든 백성이 노소를 막론하고 다 왕과 함께 한지라 왕이 여호와의 성전 안에서 발견한 언약책의 모든 말씀을 읽어 무리의 귀에 들리고\n3 왕이 단 위에 서서 여호와 앞에서 언약을 세우되 마음을 다하고 뜻을 다하여 여호와께 순종하고 그의 계명과 법도와 율례를 지켜 이 책에 기록된 이 언약의 말씀을 이루게 하리라 하매 백성이 다 그 언약을 따르기로 하니라' },
+    choir: true,
+    sermonTitle: '진정한 개혁의 시작',
+    offeringLyrics: (SAMPLE_SONGS.find((s) => s.offering) || {}).lyrics || '',
+    offeringTitle: '주를 예배하는 삶',
+    offeringPrayer: '조지혜 선생님',
+    quiz: [
+      { q: '요시야의 할아버지이자 55년간 유다를 다스린 왕으로서 유다 땅에 우상의 산당을 세우고 바알의 제단을 쌓았으며, 점치며 무당을 의지하여 *"악을 많이 행한"* 왕으로 기록된 이 사람은 누구일까요?', a: '므낫세' },
+      { q: '요시야 왕은 온 백성에게 언약책을 읽어준 후 우상과 관련된 모든 것을 제거하는 개혁을 단행합니다. 개혁 이후 요시야는 온 백성과 함께 *\'이 절기\'*를 지킵니다. 이것은 무엇일까요?', a: '유월절' },
+    ],
+    notice: '🙏 예배를 함께 준비해요\n  - 대표기도 : 부장선생님    - 헌금기도 : 이채연 선생님\n🎙️ 추수감사주일(10/18)은 *야외예배*로 드립니다!\n - 점심 메뉴 추천 결과 : 컵라면, 치킨, 김밥, 떡볶이\n🌝 추수감사절 *특별새벽기도회* (10/12~17, 6일간)\n - (온/오프라인 동시) 주중처소 월-금 05:30, 토 06:30',
+  };
+
+  const KEY = 'kids-worship-ppt-draft-v1';
+  let state;
+  try { state = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { state = null; }
+  if (!state || !state.songs) state = JSON.parse(JSON.stringify(DEFAULT));
+  if (state.offeringTitle == null) state.offeringTitle = state.offeringLyrics === DEFAULT.offeringLyrics ? DEFAULT.offeringTitle : '';
+  delete state.ui;
+  const images = { sermonImages: [], posters: [] };
+  let saveT;
+  function save() { clearTimeout(saveT); saveT = setTimeout(() => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }, 300); }
+
+  /* ---------- 단순 입력칸 연결 ---------- */
+  const bind = (id, get, set) => { const el = $(id); const isBox = el.type === 'checkbox'; isBox ? (el.checked = !!get()) : (el.value = get() || ''); el.addEventListener('input', () => { set(isBox ? el.checked : el.value); changed(); }); };
+  bind('date', () => state.date, (v) => (state.date = v));
+  bind('callRef', () => state.call.ref, (v) => (state.call.ref = v));
+  bind('callText', () => state.call.text, (v) => (state.call.text = v));
+  bind('prayer', () => state.prayer, (v) => (state.prayer = v));
+  bind('book', () => state.bible.book, (v) => { state.bible.book = v.trim(); if (ABBR[v.trim()]) { state.bible.abbr = ABBR[v.trim()]; $('abbr').value = state.bible.abbr; } });
+  bind('chapter', () => state.bible.chapter, (v) => (state.bible.chapter = v.trim()));
+  bind('verses', () => state.bible.verses, (v) => (state.bible.verses = v.trim()));
+  bind('abbr', () => state.bible.abbr, (v) => (state.bible.abbr = v.trim()));
+  bind('bibleText', () => state.bible.text, (v) => (state.bible.text = v));
+  bind('choir', () => state.choir, (v) => (state.choir = v));
+  bind('sermonTitle', () => state.sermonTitle, (v) => (state.sermonTitle = v));
+  bind('offeringLyrics', () => state.offeringLyrics, (v) => { state.offeringLyrics = v; renderStrip($('offeringStrip'), v, null, 'orange'); showOffering(); });
+  const showOffering = () => { const el = $('offeringNow'); const t = (state.offeringTitle || '').trim(); el.textContent = t || (state.offeringLyrics.trim() ? '제목 없음' : '아직 없음'); el.className = t ? '' : 'empty'; };
+  bind('offeringTitle', () => state.offeringTitle, (v) => { state.offeringTitle = v; showOffering(); });
+  showOffering();
+  // 펼치기/접기 (기억하지 않음)
+  document.querySelectorAll('[data-toggle]').forEach((btn) => {
+    const id = btn.dataset.toggle, panel = $(id), label = btn.querySelector('.tl');
+    const base = label.textContent.replace(/ 보기$/, '');
+    const set = (open) => { panel.hidden = !open; btn.setAttribute('aria-expanded', open ? 'true' : 'false'); label.textContent = base + (open ? ' 숨기기' : ' 보기'); };
+    set(false); // 열 때마다 항상 접힌 상태로 시작
+    btn.onclick = () => set(panel.hidden);
+  });
+  bind('offeringPrayer', () => state.offeringPrayer, (v) => (state.offeringPrayer = v));
+  bind('notice', () => state.notice, (v) => (state.notice = v));
+
+  /* ---------- 가사 미리보기 ---------- */
+  function renderStrip(el, lyrics, title, color) {
+    el.innerHTML = '';
+    const mk = (cls, text, tag) => { const c = document.createElement('div'); c.className = 'chip ' + cls + (color === 'orange' ? ' orange' : ''); c.textContent = text; if (tag) { const t = document.createElement('span'); t.className = 'tag'; t.textContent = tag; c.appendChild(t); } el.appendChild(c); };
+    if (title != null) mk('title', title || '제목');
+    for (const s of KidsPPT.parseLyrics(lyrics)) {
+      if (s.kind === 'interlude') mk('inter', '( 간주 )');
+      else mk('', s.lines.join('\n').slice(0, 60), s.kind === 'last' ? '마지막' : '');
+    }
+  }
+
+  /* ---------- 찬양 카드 ---------- */
+  function renderSongs() {
+    const box = $('songs'); box.innerHTML = '';
+    state.songs.forEach((song, i) => {
+      song.color = i % 2 ? 'orange' : 'blue'; // 홀수번 파랑, 짝수번 주황 (순서로 정해짐)
+      const card = document.createElement('div');
+      card.className = 'song' + (song.color === 'orange' ? ' orange' : '');
+      card.innerHTML = `
+        <div class="song-head">
+          <span class="song-no">${i + 1}</span>
+          <input type="text" id="st-${song.id}" placeholder="찬양 제목" aria-label="찬양 제목">
+          <span class="color-tag">${song.color === 'orange' ? '주황' : '파랑'}</span>
+          <button type="button" class="ghost up" aria-label="위로" ${i === 0 ? 'disabled' : ''}>↑</button>
+          <button type="button" class="ghost down" aria-label="아래로" ${i === state.songs.length - 1 ? 'disabled' : ''}>↓</button>
+        </div>
+        <textarea class="lyrics" id="sl-${song.id}" aria-label="가사" placeholder="첫 번째 슬라이드 가사&#10;&#10;두 번째 슬라이드 가사"></textarea>
+        <div class="strip"></div>
+        <div class="song-foot"><span class="cnt"></span><span class="spacer"></span><button type="button" class="ghost keep">목록에 저장</button><span class="del-wrap"><button type="button" class="ghost del">빼기</button></span></div>`;
+      const t = card.querySelector('input'), ta = card.querySelector('textarea'), strip = card.querySelector('.strip'), cnt = card.querySelector('.cnt');
+      t.value = song.title; ta.value = song.lyrics;
+      const refresh = () => { renderStrip(strip, song.lyrics, song.title, song.color); cnt.textContent = `슬라이드 ${KidsPPT.parseLyrics(song.lyrics).length + 2}장`; };
+      refresh();
+      t.addEventListener('input', () => { song.title = t.value; refresh(); changed(); });
+      ta.addEventListener('input', () => { song.lyrics = ta.value; refresh(); changed(); });
+      card.querySelector('.up').onclick = () => { state.songs.splice(i - 1, 0, state.songs.splice(i, 1)[0]); renderSongs(); changed(); };
+      card.querySelector('.down').onclick = () => { state.songs.splice(i + 1, 0, state.songs.splice(i, 1)[0]); renderSongs(); changed(); };
+      card.querySelector('.keep').onclick = async (e) => {
+        const b = e.currentTarget;
+        if (!song.title.trim() || !song.lyrics.trim()) { b.textContent = '제목과 가사를 먼저 써 주세요'; setTimeout(() => (b.textContent = '목록에 저장'), 1800); return; }
+        try { const r = await Lib.put({ title: song.title, color: song.color, lyrics: song.lyrics }, `${(state.date || '').replace(/-/g, '.')} 직접 저장`); b.textContent = r === 'exists' ? '이미 같은 가사가 있어요' : '저장됨 ✓'; }
+        catch (err) { b.textContent = '저장하지 못했어요'; }
+        Lib.pending.clear();
+        setTimeout(() => (b.textContent = '목록에 저장'), 1800);
+      };
+      const dw = card.querySelector('.del-wrap');
+      card.querySelector('.del').onclick = () => {
+        dw.innerHTML = '<span class="confirm">이 찬양을 뺄까요? <button type="button" class="yes">빼기</button><button type="button" class="ghost no">취소</button></span>';
+        dw.querySelector('.yes').onclick = () => { state.songs.splice(i, 1); renderSongs(); changed(); };
+        dw.querySelector('.no').onclick = () => renderSongs();
+      };
+      box.appendChild(card);
+    });
+  }
+  $('addSong').onclick = () => {
+    const last = state.songs[state.songs.length - 1];
+    state.songs.push({ id: uid(), title: '', color: last && last.color !== 'orange' ? 'orange' : 'blue', lyrics: '' });
+    renderSongs(); changed();
+    $('st-' + state.songs[state.songs.length - 1].id).focus();
+  };
+
+  /* ---------- 퀴즈 ---------- */
+  function renderQuiz() {
+    const box = $('quizList'); box.innerHTML = '';
+    state.quiz.forEach((q, i) => {
+      const row = document.createElement('div'); row.className = 'quiz';
+      row.innerHTML = `<textarea rows="3" id="qq-${i}" aria-label="퀴즈 ${i + 1} 문제" placeholder="문제"></textarea><input type="text" class="ans" id="qa-${i}" aria-label="정답" placeholder="정답"><button type="button" class="ghost" aria-label="퀴즈 빼기">✕</button>`;
+      const [ta, inp, del] = row.children;
+      ta.value = q.q; inp.value = q.a;
+      ta.oninput = () => { q.q = ta.value; changed(); };
+      inp.oninput = () => { q.a = inp.value; changed(); };
+      del.onclick = () => { state.quiz.splice(i, 1); renderQuiz(); changed(); };
+      box.appendChild(row);
+    });
+  }
+  $('addQuiz').onclick = () => { state.quiz.push({ q: '', a: '' }); renderQuiz(); changed(); };
+
+  /* ---------- 그림 ---------- */
+  async function readImage(file) {
+    const data = await file.arrayBuffer();
+    const url = URL.createObjectURL(file);
+    const dims = await new Promise((res) => { const im = new Image(); im.onload = () => res([im.naturalWidth, im.naturalHeight]); im.onerror = () => res([16, 9]); im.src = url; });
+    const ext = (file.type.split('/')[1] || 'png').replace('jpeg', 'jpg');
+    return { name: file.name.replace(/\.[^.]+$/, ''), data, ext, w: dims[0], h: dims[1], url };
+  }
+  function setupImages(key, dropId, inputId, thumbsId) {
+    const drop = $(dropId), input = $(inputId);
+    const add = async (files) => {
+      const list = [...files].filter((f) => /^image\//.test(f.type)).sort((a, b) => a.name.localeCompare(b.name, 'ko', { numeric: true }));
+      for (const f of list) images[key].push(await readImage(f));
+      render(); changed();
+    };
+    input.onchange = () => { add(input.files); input.value = ''; };
+    drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('over'); });
+    drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+    drop.addEventListener('drop', (e) => { e.preventDefault(); drop.classList.remove('over'); add(e.dataTransfer.files); });
+    function render() {
+      const box = $(thumbsId); box.innerHTML = '';
+      images[key].forEach((im, i) => {
+        const d = document.createElement('div'); d.className = 'thumb';
+        d.innerHTML = `<img alt=""><span class="n">${i + 1}</span><div class="ctl"><button type="button" aria-label="앞으로">←</button><button type="button" aria-label="빼기">✕</button><button type="button" aria-label="뒤로">→</button></div>`;
+        d.querySelector('img').src = im.url; d.querySelector('img').alt = im.name;
+        const [l, x, r] = d.querySelectorAll('button');
+        l.onclick = () => { if (i > 0) { images[key].splice(i - 1, 0, images[key].splice(i, 1)[0]); render(); changed(); } };
+        r.onclick = () => { if (i < images[key].length - 1) { images[key].splice(i + 1, 0, images[key].splice(i, 1)[0]); render(); changed(); } };
+        x.onclick = () => { images[key].splice(i, 1); render(); changed(); };
+        box.appendChild(d);
+      });
+    }
+  }
+  setupImages('sermonImages', 'sermonDrop', 'sermonFiles', 'sermonThumbs');
+  setupImages('posters', 'posterDrop', 'posterFiles', 'posterThumbs');
+
+  /* ---------- 설교 PPT ---------- */
+  let deck = null; // {name, data, info, include:Set}
+  async function loadDeck(file) {
+    if (!file) return;
+    if (!/\.pptx$/i.test(file.name)) { $('deckInfo').hidden = false; $('deckName').textContent = file.name; $('deckSlides').innerHTML = ''; $('deckMsg').textContent = 'PowerPoint(.pptx) 파일만 넣을 수 있어요. 예전 .ppt 파일은 PowerPoint에서 .pptx로 다시 저장해 주세요.'; return; }
+    $('deckInfo').hidden = false; $('deckName').textContent = file.name; $('deckSlides').innerHTML = ''; $('deckMsg').textContent = '슬라이드를 읽는 중…';
+    try {
+      const data = await file.arrayBuffer();
+      const info = await KidsPPT.inspectDeck(JSZip, data.slice(0));
+      deck = { name: file.name, data, info, include: new Set(info.slides.filter((s) => !s.hidden).map((s) => s.n)) };
+      renderDeck(); changed();
+    } catch (e) { console.error(e); deck = null; $('deckMsg').textContent = '이 파일을 읽지 못했어요. PowerPoint에서 열리는 .pptx 파일인지 확인해 주세요.'; renderCue(); }
+  }
+  function renderDeck() {
+    if (!deck) { $('deckInfo').hidden = true; return; }
+    $('deckInfo').hidden = false; $('deckName').textContent = deck.name;
+    const info = deck.info, hidden = info.slides.filter((s) => s.hidden).length;
+    let msg = `${info.count}장 중 ${deck.include.size}장을 넣어요. 빼고 싶은 슬라이드는 눌러서 끄세요.`;
+    if (hidden) msg += ` 숨겨진 슬라이드 ${hidden}장은 꺼 두었어요.`;
+    if (!info.sameSize) msg += ' 화면 비율이 달라서(4:3 등) 크기를 맞추고 가운데에 놓아요.';
+    $('deckMsg').textContent = msg;
+    const box = $('deckSlides'); box.innerHTML = '';
+    for (const s of info.slides) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'sl';
+      b.setAttribute('aria-pressed', deck.include.has(s.n) ? 'true' : 'false');
+      b.innerHTML = '<span class="no"></span><span class="tx"></span><span class="bd"></span>';
+      b.querySelector('.no').textContent = s.n;
+      b.querySelector('.tx').textContent = s.text || (s.pics ? `그림 ${s.pics}개` : '(빈 화면)');
+      const bd = b.querySelector('.bd');
+      const badge = (t, c) => { const e = document.createElement('span'); e.textContent = t; if (c) e.className = c; bd.appendChild(e); };
+      if (s.anim) badge('애니메이션', 'anim');
+      if (s.hidden) badge('숨김');
+      b.onclick = () => { deck.include.has(s.n) ? deck.include.delete(s.n) : deck.include.add(s.n); renderDeck(); changed(); };
+      box.appendChild(b);
+    }
+  }
+  $('deckFile').onchange = (e) => { loadDeck(e.target.files[0]); e.target.value = ''; };
+  const ddrop = $('deckDrop');
+  ddrop.addEventListener('dragover', (e) => { e.preventDefault(); ddrop.classList.add('over'); });
+  ddrop.addEventListener('dragleave', () => ddrop.classList.remove('over'));
+  ddrop.addEventListener('drop', (e) => { e.preventDefault(); ddrop.classList.remove('over'); loadDeck(e.dataTransfer.files[0]); });
+  $('deckAll').onclick = () => { if (deck) { deck.include = new Set(deck.info.slides.map((s) => s.n)); renderDeck(); changed(); } };
+  $('deckRemove').onclick = () => { deck = null; renderDeck(); changed(); };
+
+  /* ---------- 큐시트 ---------- */
+  const fullData = () => ({ ...state, sermonImages: images.sermonImages, posters: images.posters, posterLabel: `${verseMonth()}월의 암송 말씀`,
+    sermonDeck: deck && deck.include.size ? { data: deck.data, include: [...deck.include].sort((x, y) => x - y) } : null });
+  function renderCue() {
+    const plan = KidsPPT.plan(fullData());
+    const groups = [];
+    for (const s of plan) { const g = groups[groups.length - 1]; if (g && g.name === s.section) g.n++; else groups.push({ name: s.section, n: 1 }); }
+    $('cue').innerHTML = '';
+    for (const g of groups) { const li = document.createElement('li'); const a = document.createElement('span'); a.textContent = g.name; const b = document.createElement('span'); b.className = 'cnt'; b.textContent = g.n + '장'; li.append(a, b); $('cue').appendChild(li); }
+    $('total').textContent = `모두 ${plan.length}장 · 파일 이름 : ${fileName()}`;
+    $('fileHint').textContent = `파일 이름 : ${fileName()}`;
+    $('verseMonth').textContent = `${verseMonth()}월의 암송 말씀`;
+  }
+  function verseMonth() { const m = /^\d{4}-(\d{2})/.exec(state.date || nextSunday()); return m ? +m[1] : new Date().getMonth() + 1; }
+  function fileName() { return (state.date || nextSunday()).replace(/-/g, '') + '_아동부_주일예배.pptx'; }
+  function changed() { save(); renderCue(); }
+
+  /* ---------- PPT 만들기 ---------- */
+  let tplPromise;
+  const getTemplate = () => (tplPromise = tplPromise || fetch('template.txt').then((r) => { if (!r.ok) throw new Error('견본 파일을 불러오지 못했어요'); return r.text(); }).then((t) => { const bin = atob(t.trim()); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u.buffer; }));
+  getTemplate().catch(() => { tplPromise = null; });
+  const setStatus = (el, msg, cls) => { el.textContent = msg; el.className = 'status' + (cls ? ' ' + cls : ''); };
+  $('make').onclick = async () => {
+    const btn = $('make'); btn.disabled = true; setStatus($('status'), '만드는 중…');
+    try {
+      const tpl = await getTemplate();
+      const d = fullData();
+      d.sermonImages = d.sermonImages.map((im) => ({ ...im, data: im.data.slice(0) }));
+      d.posters = d.posters.map((im) => ({ ...im, data: im.data.slice(0) }));
+      if (d.sermonDeck) d.sermonDeck = { ...d.sermonDeck, data: d.sermonDeck.data.slice(0) };
+      const bytes = await KidsPPT.generate(JSZip, tpl.slice(0), d);
+      const blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation' });
+      const dl = window.claude ? await window.claude.use('downloads') : null;
+      if (dl) {
+        try { await dl.save({ filename: fileName(), data: blob }); setStatus($('status'), `${fileName()} 저장했어요.`, 'ok'); }
+        catch (e) { setStatus($('status'), e && e.code === 'declined' ? '저장을 취소했어요. 다시 누르면 또 물어봐요.' : '이 화면에서는 파일을 저장할 수 없어요. 다른 브라우저에서 열어 보세요.', e && e.code === 'declined' ? '' : 'err'); }
+      } else {
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fileName(); document.body.appendChild(a); a.click(); a.remove();
+        setStatus($('status'), `${fileName()} 내려받기를 시작했어요.`, 'ok');
+      }
+    } catch (e) {
+      console.error(e); setStatus($('status'), '만들지 못했어요: ' + (e.message || e), 'err');
+    } finally { btn.disabled = false; }
+  };
+
+  /* ---------- 찬양 목록 (함께 쓰는 목록) ---------- */
+  const norm = (s) => String(s || '').replace(/\s+/g, '').toLowerCase();
+  // 제목과 가사가 모두 같으면 같은 찬양으로 본다 (띄어쓰기·줄바꿈 차이는 무시)
+  // 예전 형식의 "봉헌 · " 머리말은 제목 비교·표시에서 뺀다
+  const cleanTitle = (t) => String(t || '').replace(/^봉헌\s*·\s*/, '').trim();
+  const showTitle = (t) => cleanTitle(t).replace(/\s*\/\s*/g, ' ');
+  const tnorm = (t) => norm(cleanTitle(t));
+  const songKey = (s) => tnorm(s.title) + '|' + norm(s.lyrics);
+  function songId(song) {
+    const k = songKey(song); let h1 = 5381, h2 = 0;
+    for (const c of k) { const x = c.charCodeAt(0); h1 = ((h1 << 5) + h1 + x) >>> 0; h2 = (x + (h2 << 6) + (h2 << 16) - h2) >>> 0; }
+    return 'v' + h1.toString(36) + h2.toString(36);
+  }
+  // 파일 이름의 날짜(20261011_…)를 "2026.10.11"로
+  function sourceLabel(name) {
+    const m = String(name || '').match(/(20\d{2})[.\-_]?(\d{2})[.\-_]?(\d{2})/);
+    return m ? `${m[1]}.${m[2]}.${m[3]} PPT` : String(name || '').replace(/\.pptx$/i, '');
+  }
+  const LKEY = 'kids-worship-ppt-songs-v1';
+  const Lib = {
+    songs: [], db: null,
+    async init() {
+      const db = window.claude ? await window.claude.use('db') : null;
+      if (db) {
+        this.db = db;
+        db.collection('songs').onSnapshot((snap) => { this.songs = snap.docs.map((d) => ({ id: d.id, ...d.data() })); renderLib(); },
+          () => setStatus($('libStatus'), '찬양 목록을 불러오지 못했어요. 잠시 뒤 다시 열어 주세요.', 'err'));
+      } else {
+        try { this.songs = JSON.parse(localStorage.getItem(LKEY) || '[]'); } catch (e) { this.songs = []; }
+        renderLib();
+      }
+    },
+    // 'exists' = 제목·가사가 같은 찬양이 이미 있어 넣지 않음, 'added' = 새로 저장
+    async put(song, source, extra) {
+      if (this.has(song)) return 'exists';
+      const id = songId(song);
+      const doc = { title: cleanTitle(song.title), color: song.color === 'orange' ? 'orange' : 'blue', lyrics: song.lyrics, addedAt: new Date().toISOString(), source: source || '', ...(extra || {}) };
+      this.pending.add(songKey(song));
+      if (this.db) { await this.db.collection('songs').doc(id).set(doc); }
+      else { this.songs = this.songs.concat({ id, ...doc }); try { localStorage.setItem(LKEY, JSON.stringify(this.songs)); } catch (e) {} renderLib(); }
+      return 'added';
+    },
+    pending: new Set(),
+    async update(id, fields) {
+      if (this.db) await this.db.collection('songs').doc(id).update(fields);
+      else { this.songs = this.songs.map((s) => (s.id === id ? { ...s, ...fields } : s)); try { localStorage.setItem(LKEY, JSON.stringify(this.songs)); } catch (e) {} renderLib(); }
+    },
+    async del(id) {
+      if (this.db) await this.db.collection('songs').doc(id).delete();
+      else { this.songs = this.songs.filter((s) => s.id !== id); try { localStorage.setItem(LKEY, JSON.stringify(this.songs)); } catch (e) {} renderLib(); }
+    },
+    has(song) { const k = songKey(song); return this.pending.has(k) || this.songs.some((s) => songKey(s) === k); },
+    hasTitle(title) { const t = tnorm(title); return this.songs.some((s) => tnorm(s.title) === t); },
+  };
+  function renderLib() {
+    $('libCount').textContent = Lib.songs.length ? `${Lib.songs.length}곡` : '비어 있음';
+    const q = norm($('libSearch').value);
+    const list = Lib.songs.filter((s) => !q || tnorm(s.title).includes(q) || norm(s.lyrics).includes(q) || norm(s.note).includes(q)).sort((a, b) => cleanTitle(a.title).localeCompare(cleanTitle(b.title), 'ko') || String(b.addedAt || b.updatedAt || '').localeCompare(String(a.addedAt || a.updatedAt || '')));
+    const titleCount = {};
+    Lib.songs.forEach((s) => { const t = tnorm(s.title); titleCount[t] = (titleCount[t] || 0) + 1; });
+    $('libHint').hidden = !Object.values(titleCount).some((n) => n > 1);
+    const box = $('lib'); box.innerHTML = '';
+    if (!Lib.songs.length) { box.innerHTML = '<p class="empty">아직 저장된 찬양이 없어요.<br>위에 지난 주일 PPT 파일을 넣거나, 찬양 카드의 "목록에 저장"을 눌러 모아 보세요.</p>'; return; }
+    if (!list.length) { box.innerHTML = '<p class="empty">찾는 찬양이 없어요.</p>'; return; }
+    for (const s of list) {
+      const it = document.createElement('div'); it.className = 'lib-item';
+      it.innerHTML = '<div class="info"><div class="t"><span class="tt"></span><span class="cnt"></span></div><div class="ly"></div><div class="ly"></div></div><div class="a"><button type="button" class="use">찬양에 넣기</button><button type="button" class="off">봉헌 찬양으로</button></div>';
+      // 목록에서는 제목의 / 줄나눔 표시를 빼고 보여준다 (PPT 제목에는 그대로 쓰임)
+      it.querySelector('.tt').textContent = showTitle(s.title);
+      const blocks = KidsPPT.parseLyrics(s.lyrics);
+      let cnt = `총 ${blocks.length}장`;
+      const dup = titleCount[tnorm(s.title)] > 1;
+      if (dup) {
+        const m = /(\d{4})\.(\d{2})\.(\d{2})/.exec(s.source || '');
+        const d = m ? `${+m[2]}/${+m[3]}` : (s.addedAt || s.updatedAt) ? (() => { const x = new Date(s.addedAt || s.updatedAt); return `${x.getMonth() + 1}/${x.getDate()}`; })() : '';
+        if (d) cnt += ` · ${d} PPT`;
+      }
+      // 같은 제목이 여러 개면 버전마다 차이점을 적어 둔다
+      if (dup || s.note) {
+        const note = document.createElement('label'); note.className = 'note';
+        note.innerHTML = '<span>차이점</span><input type="text" placeholder="예: 랩 제거 버전">';
+        const inp = note.querySelector('input');
+        inp.value = s.note || ''; inp.setAttribute('aria-label', `${showTitle(s.title)} 차이점`);
+        const saveNote = () => {
+          const v = inp.value.trim();
+          if (v === (s.note || '')) return;
+          Lib.update(s.id, { note: v }).then(() => setStatus($('libStatus'), v ? `"${showTitle(s.title)}" 차이점을 "${v}"(으)로 적었어요.` : `"${showTitle(s.title)}" 차이점을 지웠어요.`, 'ok'))
+            .catch(() => setStatus($('libStatus'), '차이점을 저장하지 못했어요. 편집 권한이 있는지 확인해 주세요.', 'err'));
+        };
+        inp.addEventListener('change', saveNote);
+        inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); inp.blur(); } });
+        it.querySelector('.info').appendChild(note);
+      }
+      it.querySelector('.cnt').textContent = cnt;
+      const first = blocks.find((b) => b.kind !== 'interlude');
+      const lines = first ? first.lines : [];
+      const ly = it.querySelectorAll('.ly');
+      ly[0].textContent = lines[0] || '';
+      ly[1].textContent = lines[1] || '';
+      if (!lines[1]) ly[1].remove();
+      it.querySelector('.use').onclick = () => { state.songs.push({ id: uid(), title: cleanTitle(s.title), color: s.color, lyrics: s.lyrics }); renderSongs(); changed(); setStatus($('libStatus'), `"${showTitle(s.title)}"을(를) ${state.songs.length}번째 찬양으로 넣었어요.`, 'ok'); };
+      it.querySelector('.off').onclick = () => { state.offeringLyrics = s.lyrics; $('offeringLyrics').value = s.lyrics; state.offeringTitle = cleanTitle(s.title); $('offeringTitle').value = state.offeringTitle; showOffering(); renderStrip($('offeringStrip'), s.lyrics, null, 'orange'); changed(); setStatus($('libStatus'), `"${showTitle(s.title)}"을(를) 봉헌 찬양으로 넣었어요.`, 'ok'); };
+      box.appendChild(it);
+    }
+  }
+  $('libSearch').addEventListener('input', renderLib);
+  const openLib = () => { $('drawer').hidden = false; setTimeout(() => $('libSearch').focus(), 50); };
+  const closeLib = () => { $('drawer').hidden = true; };
+  ['openLib1', 'openLib2', 'openLib3'].forEach((id) => ($(id).onclick = openLib));
+  $('closeLib').onclick = closeLib; $('drawerBg').onclick = closeLib;
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('drawer').hidden) closeLib(); });
+
+  let importing = false;
+  async function importFiles(files) {
+    if (importing || !files.length) return;
+    importing = true;
+    const bad = files.filter((f) => !/\.pptx$/i.test(f.name));
+    files = files.filter((f) => /\.pptx$/i.test(f.name)).sort((x, y) => y.name.localeCompare(x.name, 'ko', { numeric: true })); // 최근 파일부터
+    let added = 0, same = 0, failed = bad.length, noSongs = 0;
+    const cands = [];
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const f = files[i];
+        setStatus($('libStatus'), `가사를 읽는 중… (${i + 1}/${files.length}) ${f.name}`);
+        try {
+          const songs = (await KidsPPT.importSongs(JSZip, await f.arrayBuffer())).filter((s) => s.title && s.lyrics.trim());
+          if (!songs.length) noSongs++;
+          songs.forEach((s) => cands.push({ ...s, source: sourceLabel(f.name) }));
+        } catch (e) { console.error(e); failed++; }
+      }
+      // 이번에 저장한 것까지 포함해 같은 찬양·같은 제목을 찾는다
+      const batch = [];
+      const pool = () => Lib.songs.concat(batch);
+      const conflicts = [];
+      for (const s of cands) {
+        const k = songKey(s);
+        if (pool().some((x) => songKey(x) === k)) { same++; continue; }
+        if (pool().some((x) => tnorm(x.title) === tnorm(s.title))) { conflicts.push(s); continue; }
+        await Lib.put(s, s.source); added++;
+        batch.push({ id: songId(s), title: s.title, color: s.color, lyrics: s.lyrics, source: s.source, addedAt: new Date().toISOString() });
+      }
+      // 가사가 다른 찬양은 한 곡씩 비교해서 고른다
+      let kept = 0, replaced = 0, both = 0, applyAll = null, stopped = 0;
+      for (let i = 0; i < conflicts.length; i++) {
+        const s = conflicts[i];
+        if (pool().some((x) => songKey(x) === songKey(s))) { same++; continue; }
+        const versions = pool().filter((x) => tnorm(x.title) === tnorm(s.title)).sort((x, y) => String(y.addedAt || y.updatedAt || '').localeCompare(String(x.addedAt || x.updatedAt || '')));
+        const saved = versions[0];
+        let choice = applyAll, ans = null;
+        if (!choice) {
+          setStatus($('libStatus'), `가사가 다른 찬양을 확인하는 중… (${i + 1}/${conflicts.length})`);
+          ans = await askCompare(saved, s, i + 1, conflicts.length, versions.length);
+          if (!ans) { stopped = conflicts.length - i; break; }
+          choice = ans.choice;
+          if (ans.applyAll) applyAll = choice;
+        }
+        if (choice === 'keep') { kept++; continue; }
+        if (choice === 'replace') {
+          try { await Lib.del(saved.id); } catch (e) { console.error(e); }
+          const bi = batch.findIndex((x) => x.id === saved.id); if (bi >= 0) batch.splice(bi, 1);
+          replaced++;
+        } else {
+          both++;
+          if (ans && ans.savedNote != null && ans.savedNote !== (saved.note || '')) { try { await Lib.update(saved.id, { note: ans.savedNote }); } catch (e) { console.error(e); } }
+        }
+        await Lib.put(s, s.source, choice === 'both' && ans && ans.upNote ? { note: ans.upNote } : undefined);
+        batch.push({ id: songId(s), title: s.title, color: s.color, lyrics: s.lyrics, source: s.source, addedAt: new Date().toISOString() });
+      }
+      let msg = added ? `새 찬양 ${added}곡을 저장했어요.` : '새로 저장할 찬양은 없었어요.';
+      if (same) msg += ` 제목과 가사가 같은 ${same}곡은 이미 있어서 넣지 않았어요.`;
+      if (conflicts.length) {
+        const parts = [];
+        if (replaced) parts.push(`${replaced}곡은 올린 가사로 바꿨어요`);
+        if (both) parts.push(`${both}곡은 다른 버전으로 함께 저장했어요`);
+        if (kept) parts.push(`${kept}곡은 저장된 가사를 그대로 뒀어요`);
+        if (stopped) parts.push(`${stopped}곡은 확인하지 않고 그만둬서 넣지 않았어요`);
+        msg += ` 가사가 다른 찬양 중 ` + parts.join(', ') + '.';
+      }
+      if (noSongs) msg += ` ${noSongs}개 파일에서는 찬양을 찾지 못했어요.`;
+      if (failed) msg += ` ${failed}개 파일은 읽지 못했어요(.pptx만 가능).`;
+      setStatus($('libStatus'), msg, failed && !added ? 'err' : 'ok');
+    } catch (e) {
+      console.error(e); setStatus($('libStatus'), '가져오다 문제가 생겼어요: ' + (e.message || e), 'err');
+    } finally { importing = false; Lib.pending.clear(); }
+  }
+
+  /* ---------- 가사 비교 팝업 (A안: 나란히 보기) ---------- */
+  function slidesOf(lyrics) {
+    return KidsPPT.parseLyrics(lyrics).map((b) => (b.kind === 'interlude' ? { lines: ['( 간주 )'], last: false } : { lines: b.lines, last: b.kind === 'last' }));
+  }
+  function lineNode(a, b) {
+    const div = document.createElement('div');
+    if (b == null || a === b) { div.textContent = a; return div; }
+    const aw = a.split(' '), bw = b.split(' ');
+    aw.forEach((w, i) => {
+      if (i) div.appendChild(document.createTextNode(' '));
+      if (w !== bw[i]) { const m = document.createElement('mark'); m.textContent = w; div.appendChild(m); }
+      else div.appendChild(document.createTextNode(w));
+    });
+    return div;
+  }
+  function renderCompareCol(box, mine, other) {
+    box.innerHTML = '';
+    const n = Math.max(mine.length, other.length);
+    let diffCount = 0;
+    for (let i = 0; i < n; i++) {
+      const m = mine[i], o = other[i];
+      const differs = !m || !o || m.last !== o.last || m.lines.join('\n') !== o.lines.join('\n');
+      if (differs) diffCount++;
+      const row = document.createElement('div');
+      row.className = 'cmp-row' + (!m ? ' gone' : differs ? ' diff' : '');
+      const no = document.createElement('span'); no.className = 'cmp-no'; no.textContent = i + 1; row.appendChild(no);
+      const body = document.createElement('div'); body.className = 'cmp-body';
+      if (!m) body.textContent = '이 슬라이드 없음';
+      else {
+        if (m.last) { const t = document.createElement('span'); t.className = 'cmp-tag'; t.textContent = '마지막'; body.appendChild(t); }
+        m.lines.forEach((l, k) => body.appendChild(lineNode(l, o && o.lines[k] != null ? o.lines[k] : null)));
+      }
+      row.appendChild(body); box.appendChild(row);
+    }
+    return diffCount;
+  }
+  function askCompare(saved, up, idx, total, versionCount) {
+    return new Promise((resolve) => {
+      const S = slidesOf(saved.lyrics), U = slidesOf(up.lyrics);
+      $('cmpStep').textContent = total > 1 ? `가사가 다른 찬양 · ${idx} / ${total}` : '가사가 다른 찬양';
+      $('cmpTitle').textContent = up.title;
+      const when = saved.addedAt || saved.updatedAt;
+      const d = when ? new Date(when) : null;
+      $('cmpSavedMeta').textContent = [saved.source || '', d ? `${d.getMonth() + 1}/${d.getDate()} 등록` : '', `${S.length}장`].filter(Boolean).join(' · ');
+      $('cmpUpMeta').textContent = [up.source || '', `${U.length}장`].filter(Boolean).join(' · ');
+      const diffs = renderCompareCol($('cmpSaved'), S, U);
+      renderCompareCol($('cmpUp'), U, S);
+      $('cmpLead').textContent = `같은 제목의 찬양이 목록에 있는데 가사가 달라요. ${diffs}곳이 달라서 표시했어요.` + (versionCount > 1 ? ` (저장된 버전 ${versionCount}개 중 가장 최근 것과 비교해요.)` : '');
+      const rest = total - idx;
+      $('cmpAllWrap').hidden = rest < 1;
+      $('cmpAllText').textContent = `남은 ${rest}곡에도 같은 선택 적용`;
+      $('cmpAll').checked = false;
+      $('cmpNoteSaved').value = saved.note || ''; $('cmpNoteUp').value = '';
+      let choice = 'keep';
+      const radios = [...document.querySelectorAll('#cmpChoices .cmp-choice')];
+      const sync = () => {
+        radios.forEach((r) => { const on = r.dataset.v === choice; r.setAttribute('aria-checked', on ? 'true' : 'false'); r.tabIndex = on ? 0 : -1; });
+        $('cmpOk').textContent = { keep: '이대로 두기', replace: '바꾸기', both: '둘 다 저장' }[choice];
+        $('cmpNotes').hidden = choice !== 'both';
+      };
+      radios.forEach((r, i) => {
+        r.onclick = () => { choice = r.dataset.v; sync(); };
+        r.onkeydown = (e) => {
+          if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            const j = (i + (e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : radios.length - 1)) % radios.length;
+            choice = radios[j].dataset.v; sync(); radios[j].focus();
+          }
+        };
+      });
+      sync();
+      const done = (val) => { $('cmp').hidden = true; document.removeEventListener('keydown', onKey, true); resolve(val); };
+      const onKey = (e) => { if (e.key === 'Escape') { e.stopPropagation(); e.preventDefault(); done(null); } };
+      document.addEventListener('keydown', onKey, true);
+      $('cmpOk').onclick = () => done({ choice, applyAll: $('cmpAll').checked, savedNote: $('cmpNoteSaved').value.trim(), upNote: $('cmpNoteUp').value.trim() });
+      $('cmpStop').onclick = () => done(null);
+      $('cmpClose').onclick = () => done(null);
+      $('cmp').hidden = false;
+      $('cmpSaved').scrollTop = 0; $('cmpUp').scrollTop = 0;
+      setTimeout(() => radios[0].focus(), 30);
+    });
+  }
+  // 두 칸 스크롤을 함께 움직이기
+  (() => {
+    let lock = false;
+    const link = (a, b) => a.addEventListener('scroll', () => { if (lock) return; lock = true; b.scrollTop = a.scrollTop; requestAnimationFrame(() => (lock = false)); });
+    link($('cmpSaved'), $('cmpUp')); link($('cmpUp'), $('cmpSaved'));
+  })();
+  $('importFiles').onchange = (e) => { importFiles([...e.target.files]); e.target.value = ''; };
+  const idrop = $('importDrop');
+  idrop.addEventListener('dragover', (e) => { e.preventDefault(); idrop.classList.add('over'); });
+  idrop.addEventListener('dragleave', () => idrop.classList.remove('over'));
+  idrop.addEventListener('drop', (e) => { e.preventDefault(); idrop.classList.remove('over'); importFiles([...e.dataTransfer.files]); });
+
+  /* ---------- 시작 ---------- */
+  renderSongs(); renderQuiz(); renderStrip($('offeringStrip'), state.offeringLyrics, null, 'orange'); renderCue();
+  Lib.init();
+})();
+
+</script>
