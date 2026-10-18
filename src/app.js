@@ -363,6 +363,8 @@
     const titleCount = {};
     Lib.songs.forEach((s) => { const t = tnorm(s.title); titleCount[t] = (titleCount[t] || 0) + 1; });
     $('libHint').hidden = !Object.values(titleCount).some((n) => n > 1);
+    $('exportWrap').hidden = !!Lib.db || !Lib.local.length;
+    $('exportCount').textContent = Lib.local.length;
     const box = $('lib'); box.innerHTML = '';
     if (!Lib.songs.length) { box.innerHTML = '<p class="empty">아직 저장된 찬양이 없어요.<br>위에 지난 주일 PPT 파일을 넣거나, 찬양 카드의 "목록에 저장"을 눌러 모아 보세요.</p>'; return; }
     if (!list.length) { box.innerHTML = '<p class="empty">찾는 찬양이 없어요.</p>'; return; }
@@ -418,8 +420,9 @@
   async function importFiles(files) {
     if (importing || !files.length) return;
     importing = true;
-    const bad = files.filter((f) => !/\.pptx$/i.test(f.name));
-    files = files.filter((f) => /\.pptx$/i.test(f.name)).sort((x, y) => y.name.localeCompare(x.name, 'ko', { numeric: true })); // 최근 파일부터
+    const ok = (f) => /\.(pptx|json)$/i.test(f.name);
+    const bad = files.filter((f) => !ok(f));
+    files = files.filter(ok).sort((x, y) => y.name.localeCompare(x.name, 'ko', { numeric: true })); // 최근 파일부터
     let added = 0, same = 0, failed = bad.length, noSongs = 0;
     const cands = [];
     setStatus($('libStatus'), '찬양 목록을 불러오는 중…');
@@ -429,6 +432,14 @@
         const f = files[i];
         setStatus($('libStatus'), `가사를 읽는 중… (${i + 1}/${files.length}) ${f.name}`);
         try {
+          if (/\.json$/i.test(f.name)) {
+            // 다른 브라우저에서 내보낸 찬양 목록 파일
+            const list = JSON.parse(await f.text());
+            const songs = (Array.isArray(list) ? list : list.songs || []).filter((s) => s && s.title && String(s.lyrics || '').trim());
+            if (!songs.length) noSongs++;
+            songs.forEach((s) => cands.push({ title: s.title, color: s.color, lyrics: s.lyrics, note: s.note || '', source: s.source || '다른 브라우저에서 옮김' }));
+            continue;
+          }
           const songs = (await KidsPPT.importSongs(JSZip, await f.arrayBuffer())).filter((s) => s.title && s.lyrics.trim());
           if (!songs.length) noSongs++;
           songs.forEach((s) => cands.push({ ...s, source: sourceLabel(f.name) }));
@@ -442,7 +453,7 @@
         const k = songKey(s);
         if (pool().some((x) => songKey(x) === k)) { same++; continue; }
         if (pool().some((x) => tnorm(x.title) === tnorm(s.title))) { conflicts.push(s); continue; }
-        await Lib.put(s, s.source); added++;
+        await Lib.put(s, s.source, s.note ? { note: s.note } : undefined); added++;
         batch.push({ id: songId(s), title: s.title, color: s.color, lyrics: s.lyrics, source: s.source, addedAt: new Date().toISOString() });
       }
       // 가사가 다른 찬양은 한 곡씩 비교해서 고른다
@@ -469,7 +480,8 @@
           both++;
           if (ans && ans.savedNote != null && ans.savedNote !== (saved.note || '')) { try { await Lib.update(saved.id, { note: ans.savedNote }); } catch (e) { console.error(e); } }
         }
-        await Lib.put(s, s.source, choice === 'both' && ans && ans.upNote ? { note: ans.upNote } : undefined);
+        const upNote = (choice === 'both' && ans && ans.upNote) || s.note || '';
+        await Lib.put(s, s.source, upNote ? { note: upNote } : undefined);
         batch.push({ id: songId(s), title: s.title, color: s.color, lyrics: s.lyrics, source: s.source, addedAt: new Date().toISOString() });
       }
       let msg = added ? `새 찬양 ${added}곡을 저장했어요.` : '새로 저장할 찬양은 없었어요.';
@@ -483,7 +495,7 @@
         msg += ` 가사가 다른 찬양 중 ` + parts.join(', ') + '.';
       }
       if (noSongs) msg += ` ${noSongs}개 파일에서는 찬양을 찾지 못했어요.`;
-      if (failed) msg += ` ${failed}개 파일은 읽지 못했어요(.pptx만 가능).`;
+      if (failed) msg += ` ${failed}개 파일은 읽지 못했어요(.pptx 또는 내보낸 찬양 목록 파일만 가능).`;
       setStatus($('libStatus'), msg, failed && !added ? 'err' : 'ok');
     } catch (e) {
       console.error(e); setStatus($('libStatus'), '가져오다 문제가 생겼어요: ' + (e.message || e), 'err');
@@ -542,8 +554,8 @@
       $('cmpAllWrap').hidden = rest < 1;
       $('cmpAllText').textContent = `남은 ${rest}곡에도 같은 선택 적용`;
       $('cmpAll').checked = false;
-      $('cmpNoteSaved').value = saved.note || ''; $('cmpNoteUp').value = '';
-      let choice = 'keep';
+      $('cmpNoteSaved').value = saved.note || ''; $('cmpNoteUp').value = up.note || '';
+      let choice = up.note ? 'both' : 'keep'; // 차이점이 적혀 온 버전은 '둘 다 저장'을 먼저 골라 둔다
       const radios = [...document.querySelectorAll('#cmpChoices .cmp-choice')];
       const sync = () => {
         radios.forEach((r) => { const on = r.dataset.v === choice; r.setAttribute('aria-checked', on ? 'true' : 'false'); r.tabIndex = on ? 0 : -1; });
@@ -578,6 +590,21 @@
     const link = (a, b) => a.addEventListener('scroll', () => { if (lock) return; lock = true; b.scrollTop = a.scrollTop; requestAnimationFrame(() => (lock = false)); });
     link($('cmpSaved'), $('cmpUp')); link($('cmpUp'), $('cmpSaved'));
   })();
+  // 이 브라우저에만 저장된 찬양을 파일로 내보내기 (Claude 밖에서 연 경우)
+  async function exportLocal() {
+    const list = Lib.local.map(({ id, ...s }) => s);
+    if (!list.length) { setStatus($('libStatus'), '이 브라우저에만 저장된 찬양이 없어요.', ''); return; }
+    const d = new Date(), pad = (n) => String(n).padStart(2, '0');
+    const name = `찬양목록_${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}.json`;
+    const blob = new Blob([JSON.stringify(list, null, 1)], { type: 'application/json' });
+    const dl = window.claude ? await window.claude.use('downloads') : null;
+    try {
+      if (dl) await dl.save({ filename: name, data: blob });
+      else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
+      setStatus($('libStatus'), `이 브라우저의 찬양 ${list.length}곡을 ${name} 파일로 내보냈어요. Claude 페이지의 찬양 목록에 이 파일을 넣으면 저장돼요.`, 'ok');
+    } catch (e) { setStatus($('libStatus'), '파일을 내보내지 못했어요.', 'err'); }
+  }
+  $('exportLocal').onclick = exportLocal;
   $('importFiles').onchange = (e) => { importFiles([...e.target.files]); e.target.value = ''; };
   const idrop = $('importDrop');
   idrop.addEventListener('dragover', (e) => { e.preventDefault(); idrop.classList.add('over'); });

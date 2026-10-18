@@ -155,7 +155,8 @@
     <div class="dhead"><h2 id="drawerTitle">찬양 목록</h2><button class="ghost" id="closeLib" type="button" aria-label="닫기">닫기 ✕</button></div>
     <div class="tools">
       <input type="text" id="libSearch" placeholder="제목이나 가사, 차이점으로 찾기" aria-label="찬양 찾기">
-      <label class="drop" for="importFiles" id="importDrop" style="padding:10px"><b>주일예배 PPT 파일들</b>을 한꺼번에 넣으면 찬양 가사만 뽑아 저장해요<br><span class="small">제목과 가사가 같은 찬양은 한 번만 저장돼요</span><input type="file" id="importFiles" accept=".pptx" multiple></label>
+      <label class="drop" for="importFiles" id="importDrop" style="padding:10px"><b>주일예배 PPT 파일들</b>을 한꺼번에 넣으면 찬양 가사만 뽑아 저장해요<br><span class="small">내보낸 찬양 목록 파일(.json)도 넣을 수 있어요 · 제목과 가사가 같은 찬양은 한 번만 저장돼요</span><input type="file" id="importFiles" accept=".pptx,.json" multiple></label>
+      <div class="export" id="exportWrap" hidden><span>이 브라우저에만 저장된 찬양 <b id="exportCount">0</b>곡</span><button type="button" id="exportLocal">파일로 내보내기</button></div>
       <div class="status" id="libStatus"></div>
     </div>
     <p class="small lib-hint" id="libHint" hidden>같은 제목이 여러 개인 찬양에는 <b>차이점</b> 칸이 열려 있어요. 적고 Enter를 누르면 저장돼요.</p>
