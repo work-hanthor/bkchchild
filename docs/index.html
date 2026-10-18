@@ -1332,8 +1332,16 @@ aside{position:sticky;top:calc(env(safe-area-inset-top,0px) + 14px);display:flex
   // 예전 형식의 "봉헌 · " 머리말은 제목 비교·표시에서 뺀다
   const cleanTitle = (t) => String(t || '').replace(/^봉헌\s*·\s*/, '').trim();
   const showTitle = (t) => cleanTitle(t).replace(/\s*\/\s*/g, ' ');
-  const tnorm = (t) => norm(cleanTitle(t));
+  // 제목 비교: 띄어쓰기와 줄나눔 표시(/)는 무시
+  const tnorm = (t) => norm(cleanTitle(t).replace(/\//g, ''));
   const songKey = (s) => tnorm(s.title) + '|' + norm(s.lyrics);
+  // 제목이 조금 달라도(맞춤법, 줄인 제목) 가사가 똑같으면 같은 찬양
+  const sameSong = (x, s) => songKey(x) === songKey(s) || norm(x.lyrics) === norm(s.lyrics);
+  // 한쪽 제목이 다른 쪽을 포함하면 비슷한 제목 ("내 모든 삶의 행동" ↔ "내 모든 삶의 행동 주안에")
+  const similarTitle = (a, b) => {
+    const x = tnorm(a), y = tnorm(b);
+    return x === y || (Math.min(x.length, y.length) >= 4 && (x.includes(y) || y.includes(x)));
+  };
   function songId(song) {
     const k = songKey(song); let h1 = 5381, h2 = 0;
     for (const c of k) { const x = c.charCodeAt(0); h1 = ((h1 << 5) + h1 + x) >>> 0; h2 = (x + (h2 << 6) + (h2 << 16) - h2) >>> 0; }
@@ -1410,7 +1418,7 @@ aside{position:sticky;top:calc(env(safe-area-inset-top,0px) + 14px);display:flex
       if (this.db) await this.db.collection('songs').doc(id).delete();
       else { this.local = this.local.filter((s) => s.id !== id); this.shared = this.shared.filter((s) => s.id !== id); this.saveLocal(); }
     },
-    has(song) { const k = songKey(song); return this.pending.has(k) || this.songs.some((s) => songKey(s) === k); },
+    has(song) { const k = songKey(song); return this.pending.has(k) || this.songs.some((s) => sameSong(s, song)); },
     hasTitle(title) { const t = tnorm(title); return this.songs.some((s) => tnorm(s.title) === t); },
   };
   function renderLib() {
@@ -1508,8 +1516,8 @@ aside{position:sticky;top:calc(env(safe-area-inset-top,0px) + 14px);display:flex
       const conflicts = [];
       for (const s of cands) {
         const k = songKey(s);
-        if (pool().some((x) => songKey(x) === k)) { same++; continue; }
-        if (pool().some((x) => tnorm(x.title) === tnorm(s.title))) { conflicts.push(s); continue; }
+        if (pool().some((x) => sameSong(x, s))) { same++; continue; }
+        if (pool().some((x) => similarTitle(x.title, s.title))) { conflicts.push(s); continue; }
         await Lib.put(s, s.source, s.note ? { note: s.note } : undefined); added++;
         batch.push({ id: songId(s), title: s.title, color: s.color, lyrics: s.lyrics, source: s.source, addedAt: new Date().toISOString() });
       }
@@ -1517,8 +1525,8 @@ aside{position:sticky;top:calc(env(safe-area-inset-top,0px) + 14px);display:flex
       let kept = 0, replaced = 0, both = 0, applyAll = null, stopped = 0;
       for (let i = 0; i < conflicts.length; i++) {
         const s = conflicts[i];
-        if (pool().some((x) => songKey(x) === songKey(s))) { same++; continue; }
-        const versions = pool().filter((x) => tnorm(x.title) === tnorm(s.title)).sort((x, y) => String(y.addedAt || y.updatedAt || '').localeCompare(String(x.addedAt || x.updatedAt || '')));
+        if (pool().some((x) => sameSong(x, s))) { same++; continue; }
+        const versions = pool().filter((x) => similarTitle(x.title, s.title)).sort((x, y) => String(y.addedAt || y.updatedAt || '').localeCompare(String(x.addedAt || x.updatedAt || '')));
         const saved = versions[0];
         let choice = applyAll, ans = null;
         if (!choice) {
@@ -1565,7 +1573,7 @@ aside{position:sticky;top:calc(env(safe-area-inset-top,0px) + 14px);display:flex
   }
   function lineNode(a, b) {
     const div = document.createElement('div');
-    if (b == null || a === b) { div.textContent = a; return div; }
+    if (b == null || norm(a) === norm(b)) { div.textContent = a; return div; } // 띄어쓰기만 다르면 같은 줄
     const aw = a.split(' '), bw = b.split(' ');
     aw.forEach((w, i) => {
       if (i) div.appendChild(document.createTextNode(' '));
@@ -1574,17 +1582,38 @@ aside{position:sticky;top:calc(env(safe-area-inset-top,0px) + 14px);display:flex
     });
     return div;
   }
-  function renderCompareCol(box, mine, other) {
+  // 같은 슬라이드끼리 짝을 맞춘다 (한쪽에 슬라이드가 더 있어도 뒤가 밀리지 않게)
+  function alignSlides(A, B) {
+    const key = (s) => (s.last ? 'L' : '') + norm(s.lines.join('\n'));
+    const n = A.length, m = B.length;
+    const L = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+    for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--)
+      L[i][j] = key(A[i]) === key(B[j]) ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
+    const pairs = [];
+    let i = 0, j = 0, ga = [], gb = [];
+    const flush = () => {
+      const k = Math.max(ga.length, gb.length);
+      for (let t = 0; t < k; t++) pairs.push([ga[t] || null, gb[t] || null]);
+      ga = []; gb = [];
+    };
+    while (i < n || j < m) {
+      if (i < n && j < m && key(A[i]) === key(B[j])) { flush(); pairs.push([{ ...A[i], no: i + 1 }, { ...B[j], no: j + 1 }]); i++; j++; }
+      else if (j >= m || (i < n && L[i + 1][j] >= L[i][j + 1])) { ga.push({ ...A[i], no: i + 1 }); i++; }
+      else { gb.push({ ...B[j], no: j + 1 }); j++; }
+    }
+    flush();
+    return pairs;
+  }
+  function renderCompareCol(box, pairs, side) {
     box.innerHTML = '';
-    const n = Math.max(mine.length, other.length);
     let diffCount = 0;
-    for (let i = 0; i < n; i++) {
-      const m = mine[i], o = other[i];
-      const differs = !m || !o || m.last !== o.last || m.lines.join('\n') !== o.lines.join('\n');
+    for (const p of pairs) {
+      const m = p[side], o = p[1 - side];
+      const differs = !m || !o || m.last !== o.last || norm(m.lines.join('')) !== norm(o.lines.join(''));
       if (differs) diffCount++;
       const row = document.createElement('div');
       row.className = 'cmp-row' + (!m ? ' gone' : differs ? ' diff' : '');
-      const no = document.createElement('span'); no.className = 'cmp-no'; no.textContent = i + 1; row.appendChild(no);
+      const no = document.createElement('span'); no.className = 'cmp-no'; no.textContent = m ? m.no : ''; row.appendChild(no);
       const body = document.createElement('div'); body.className = 'cmp-body';
       if (!m) body.textContent = '이 슬라이드 없음';
       else {
@@ -1604,9 +1633,12 @@ aside{position:sticky;top:calc(env(safe-area-inset-top,0px) + 14px);display:flex
       const d = when ? new Date(when) : null;
       $('cmpSavedMeta').textContent = [saved.source || '', d ? `${d.getMonth() + 1}/${d.getDate()} 등록` : '', `${S.length}장`].filter(Boolean).join(' · ');
       $('cmpUpMeta').textContent = [up.source || '', `${U.length}장`].filter(Boolean).join(' · ');
-      const diffs = renderCompareCol($('cmpSaved'), S, U);
-      renderCompareCol($('cmpUp'), U, S);
-      $('cmpLead').textContent = `같은 제목의 찬양이 목록에 있는데 가사가 달라요. ${diffs}곳이 달라서 표시했어요.` + (versionCount > 1 ? ` (저장된 버전 ${versionCount}개 중 가장 최근 것과 비교해요.)` : '');
+      const pairs = alignSlides(S, U);
+      const diffs = renderCompareCol($('cmpSaved'), pairs, 0);
+      renderCompareCol($('cmpUp'), pairs, 1);
+      const sameTitle = tnorm(saved.title) === tnorm(up.title);
+      $('cmpLead').textContent = (sameTitle ? '같은 제목의 찬양이 목록에 있는데 가사가 달라요.' : `비슷한 제목의 찬양 "${showTitle(saved.title)}"이(가) 목록에 있는데 가사가 달라요.`)
+        + ` ${diffs}곳이 달라서 표시했어요.` + (versionCount > 1 ? ` (저장된 버전 ${versionCount}개 중 가장 최근 것과 비교해요.)` : '');
       const rest = total - idx;
       $('cmpAllWrap').hidden = rest < 1;
       $('cmpAllText').textContent = `남은 ${rest}곡에도 같은 선택 적용`;
